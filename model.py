@@ -120,57 +120,70 @@ def model_page():
     # Cargar estaciones para el selector
     estaciones = load_stations()
     
+    # Selector de estación fuera del formulario para que se actualice en tiempo real
+    col_geo_header, col_temp_header = st.columns(2)
+    
+    with col_geo_header:
+        st.markdown("### 📍 Datos Geográficos")
+        
+        if estaciones:
+            # Si hay estaciones disponibles, usar selector
+            nombres_estaciones = sorted(list(estaciones.keys()))
+            estacion_seleccionada = st.selectbox(
+                "Estación de Origen",
+                options=nombres_estaciones,
+                index=0 if nombres_estaciones else None,
+                help="Selecciona la estación de origen. Las coordenadas se obtendrán automáticamente.",
+                key="estacion_selector"
+            )
+            
+            # Obtener coordenadas de la estación seleccionada
+            if estacion_seleccionada:
+                origen_lat = estaciones[estacion_seleccionada]['lat']
+                origen_lon = estaciones[estacion_seleccionada]['lon']
+                
+                # Mostrar coordenadas (se actualiza en tiempo real)
+                st.info(f"📍 **Coordenadas**: Lat {origen_lat:.5f}, Lon {origen_lon:.5f}")
+            else:
+                origen_lat = -32.89
+                origen_lon = -68.84
+        else:
+            # Si no hay estaciones, usar inputs numéricos (fallback)
+            st.warning("⚠️ No se encontraron datos de estaciones. Usa coordenadas manuales.")
+            origen_lat = st.number_input(
+                "Latitud de Origen",
+                value=-32.89,
+                min_value=-90.0,
+                max_value=90.0,
+                step=0.00001,
+                format="%.5f",
+                help="Latitud de la estación de origen (ej: -32.89 para Mendoza)",
+                key="lat_input"
+            )
+            origen_lon = st.number_input(
+                "Longitud de Origen",
+                value=-68.84,
+                min_value=-180.0,
+                max_value=180.0,
+                step=0.00001,
+                format="%.5f",
+                help="Longitud de la estación de origen (ej: -68.84 para Mendoza)",
+                key="lon_input"
+            )
+    
+    with col_temp_header:
+        st.markdown("### ⏰ Datos Temporales")
+    
     # Formulario de entrada
     with st.form("form_prediccion"):
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("### 📍 Datos Geográficos")
-            
+            # Mostrar coordenadas seleccionadas (solo lectura dentro del form)
             if estaciones:
-                # Si hay estaciones disponibles, usar selector
-                nombres_estaciones = sorted(list(estaciones.keys()))
-                estacion_seleccionada = st.selectbox(
-                    "Estación de Origen",
-                    options=nombres_estaciones,
-                    index=0 if nombres_estaciones else None,
-                    help="Selecciona la estación de origen. Las coordenadas se obtendrán automáticamente."
-                )
-                
-                # Obtener coordenadas de la estación seleccionada
-                if estacion_seleccionada:
-                    origen_lat = estaciones[estacion_seleccionada]['lat']
-                    origen_lon = estaciones[estacion_seleccionada]['lon']
-                    
-                    # Mostrar coordenadas (solo lectura)
-                    st.info(f"📍 **Coordenadas**: Lat {origen_lat:.5f}, Lon {origen_lon:.5f}")
-                else:
-                    origen_lat = -32.89
-                    origen_lon = -68.84
-            else:
-                # Si no hay estaciones, usar inputs numéricos (fallback)
-                st.warning("⚠️ No se encontraron datos de estaciones. Usa coordenadas manuales.")
-                origen_lat = st.number_input(
-                    "Latitud de Origen",
-                    value=-32.89,
-                    min_value=-90.0,
-                    max_value=90.0,
-                    step=0.00001,
-                    format="%.5f",
-                    help="Latitud de la estación de origen (ej: -32.89 para Mendoza)"
-                )
-                origen_lon = st.number_input(
-                    "Longitud de Origen",
-                    value=-68.84,
-                    min_value=-180.0,
-                    max_value=180.0,
-                    step=0.00001,
-                    format="%.5f",
-                    help="Longitud de la estación de origen (ej: -68.84 para Mendoza)"
-                )
+                st.caption(f"📍 Coordenadas seleccionadas: Lat {origen_lat:.5f}, Lon {origen_lon:.5f}")
         
         with col2:
-            st.markdown("### ⏰ Datos Temporales")
             hora_salida = st.slider(
                 "Hora de Salida",
                 min_value=0,
