@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
+import os
 # from lib import load_model  # No se usa directamente
 
 def plots_page():
@@ -25,22 +26,61 @@ def plots_page():
     try:
         # Intentar diferentes rutas posibles
         dataset_paths = [
-            "../prediccion/dataset_modelo_final.csv",
             "dataset_modelo_final.csv",
+            "../prediccion/dataset_modelo_final.csv",
             "../../prediccion/dataset_modelo_final.csv"
         ]
         df = None
         for path in dataset_paths:
             try:
-                df = pd.read_csv(path)
-                st.success(f"Dataset cargado: {len(df):,} registros desde {path}")
-                break
+                if os.path.exists(path):
+                    df = pd.read_csv(path)
+                    st.success(f"Dataset cargado: {len(df):,} registros desde {path}")
+                    break
             except FileNotFoundError:
                 continue
         
         if df is None:
-            st.error("No se encontró el dataset. Por favor, asegúrate de que dataset_modelo_final.csv esté disponible.")
-            st.info("Puedes copiar el dataset desde la carpeta prediccion/ a esta carpeta o ajustar la ruta.")
+            st.warning("⚠️ No se encontró el dataset. Las visualizaciones de datos no estarán disponibles.")
+            st.info("💡 Puedes copiar el dataset desde la carpeta prediccion/ a esta carpeta o ajustar la ruta.")
+            # Continuar sin dataset - mostrar solo importancia del modelo si está disponible
+            if modelo is not None:
+                st.markdown("---")
+                st.markdown("## 1. Importancia de Características del Modelo")
+                if hasattr(modelo, 'feature_importances_'):
+                    importance = modelo.feature_importances_
+                    feature_names = modelo.feature_names_in_ if hasattr(modelo, 'feature_names_in_') else [f'feature_{i}' for i in range(len(importance))]
+                    
+                    imp_df = pd.DataFrame({
+                        'caracteristica': feature_names,
+                        'importancia': importance
+                    }).sort_values('importancia', ascending=False).head(15)
+                    
+                    chart1 = (
+                        alt.Chart(imp_df)
+                        .mark_bar()
+                        .encode(
+                            x=alt.X('importancia:Q', 
+                                   title='Importancia (Gini)', 
+                                   axis=alt.Axis(format='.4f')),
+                            y=alt.Y('caracteristica:N', 
+                                   sort='-x', 
+                                   title='Característica'),
+                            tooltip=[
+                                alt.Tooltip('caracteristica:N', title='Característica'),
+                                alt.Tooltip('importancia:Q', title='Importancia', format='.4f')
+                            ],
+                            color=alt.Color('importancia:Q', 
+                                           scale=alt.Scale(scheme='blues'), 
+                                           legend=None)
+                        )
+                        .properties(
+                            width=700,
+                            height=500,
+                            title='Top 15 Características Más Importantes del Modelo'
+                        )
+                    )
+                    st.altair_chart(chart1, use_container_width=True)
             return
     except Exception as e:
         st.error(f"Error al cargar el dataset: {e}")

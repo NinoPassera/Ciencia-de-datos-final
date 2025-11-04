@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import json
+import os
 from datetime import datetime
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.neighbors import NearestNeighbors
@@ -210,24 +211,28 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
 
 def load_model():
     """Carga el modelo Random Forest entrenado"""
+    # Intentar diferentes rutas posibles
+    model_paths = [
+        "static/modelo_random_forest_final_tunado.pkl",
+        "modelo_random_forest_final_tunado.pkl",
+        "../prediccion/modelo_random_forest_final_tunado.pkl"
+    ]
+    
+    for model_path in model_paths:
+        try:
+            if os.path.exists(model_path):
+                modelo = joblib.load(model_path)
+                return modelo
+        except Exception as e:
+            continue
+    
+    # Si no se encuentra, mostrar advertencia pero no error
     try:
-        model_path = "static/modelo_random_forest_final_tunado.pkl"
-        modelo = joblib.load(model_path)
-        return modelo
-    except FileNotFoundError:
-        try:
-            import streamlit as st
-            st.error(f"No se encontró el modelo en {model_path}")
-        except:
-            pass
-        return None
-    except Exception as e:
-        try:
-            import streamlit as st
-            st.error(f"Error al cargar el modelo: {e}")
-        except:
-            pass
-        return None
+        import streamlit as st
+        st.warning(f"⚠️ No se encontró el modelo. Algunas funcionalidades no estarán disponibles. Por favor, asegúrate de que el modelo esté en static/")
+    except:
+        pass
+    return None
 
 
 def load_preprocessor():
