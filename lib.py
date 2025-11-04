@@ -379,24 +379,17 @@ def load_preprocessor():
         except Exception as e:
             continue
     
-    # Si no existe, crear uno nuevo
-    try:
-        return create_preprocessor()
-    except Exception as e:
-        try:
-            import streamlit as st
-            st.warning(f"No se pudo crear el preprocessor: {e}")
-        except:
-            pass
-        return None
+    # Si no existe, crear uno nuevo (necesitamos el modelo para detectar features)
+    # Retornar None aquí y dejar que model.py cree el preprocessor con el modelo
+    return None
 
 
-def create_preprocessor():
+def create_preprocessor(modelo=None):
     """Crea un preprocessor con todos los transformers"""
     from sklearn.pipeline import Pipeline
     
-    # Features finales en el orden correcto (incluyendo destino_favorito_encoded)
-    features_finales = [
+    # Features base (27 características originales)
+    features_base = [
         'origen_lat', 'origen_lon',
         'hora_salida', 'dia_semana', 'mes',
         'viajes_totales', 'semanas_activas', 'viajes_por_semana', 'duracion_promedio_min',
@@ -404,9 +397,33 @@ def create_preprocessor():
         'capacidad_origen', 'estaciones_cercanas_origen', 'variedad_destinos', 'variedad_origenes',
         'consistencia_horaria', 'distancia_promedio_usuario', 'dia_favorito',
         'frecuencia_lunes', 'frecuencia_martes', 'frecuencia_miercoles',
-        'frecuencia_jueves', 'frecuencia_viernes', 'frecuencia_sabado', 'frecuencia_domingo',
-        'destino_favorito_encoded'
+        'frecuencia_jueves', 'frecuencia_viernes', 'frecuencia_sabado', 'frecuencia_domingo'
     ]
+    
+    # Detectar si el modelo espera destino_favorito_encoded
+    usar_destino_favorito = False
+    if modelo is not None:
+        # Verificar si el modelo tiene feature_names_in_ y si incluye destino_favorito_encoded
+        if hasattr(modelo, 'feature_names_in_'):
+            if 'destino_favorito_encoded' in modelo.feature_names_in_:
+                usar_destino_favorito = True
+        # También verificar si hay LabelEncoder disponible (indicador de modelo con destino favorito)
+        label_encoder = load_label_encoder()
+        if label_encoder is not None:
+            usar_destino_favorito = True
+    else:
+        # Si no hay modelo cargado, verificar si hay LabelEncoder disponible
+        label_encoder = load_label_encoder()
+        if label_encoder is not None:
+            usar_destino_favorito = True
+    
+    # Construir lista de features finales
+    if usar_destino_favorito:
+        features_finales = features_base + ['destino_favorito_encoded']
+        label_encoder = load_label_encoder()
+    else:
+        features_finales = features_base
+        label_encoder = None
     
     # Intentar cargar datos de estaciones si existen
     estaciones_data = None
@@ -422,9 +439,6 @@ def create_preprocessor():
                 estaciones_data['station_lon'] = estaciones_data['lon']
     except:
         pass
-    
-    # Intentar cargar LabelEncoder para destino favorito
-    label_encoder = load_label_encoder()
     
     preprocessor = Pipeline([
         ('temporal', FeatureEngineeringTemporal()),

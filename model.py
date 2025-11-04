@@ -29,12 +29,16 @@ def model_page():
     # Cargar preprocessor con manejo de errores
     try:
         preprocessor = load_preprocessor()
+        # Si no se encontró preprocessor guardado, crear uno nuevo pasando el modelo
+        if preprocessor is None:
+            from lib import create_preprocessor
+            preprocessor = create_preprocessor(modelo=modelo)
     except Exception as e:
         st.error(f"Error al cargar el preprocessor: {e}")
         st.info("💡 Intentando crear un preprocessor nuevo...")
         try:
             from lib import create_preprocessor
-            preprocessor = create_preprocessor()
+            preprocessor = create_preprocessor(modelo=modelo)
         except Exception as e2:
             st.error(f"No se pudo crear el preprocessor: {e2}")
             return
