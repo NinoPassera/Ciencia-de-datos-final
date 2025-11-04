@@ -209,6 +209,55 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
 # FUNCIONES DE CARGA Y PROCESAMIENTO
 # ============================================================================
 
+def load_stations():
+    """Carga las estaciones con sus nombres y coordenadas"""
+    estaciones_paths = [
+        "../prediccion/station_data_enriched (1).csv",
+        "prediccion/station_data_enriched (1).csv",
+        "station_data_enriched (1).csv"
+    ]
+    
+    for estaciones_path in estaciones_paths:
+        try:
+            if os.path.exists(estaciones_path):
+                df_estaciones = pd.read_csv(estaciones_path)
+                
+                # Normalizar nombres de columnas
+                if 'station_name' not in df_estaciones.columns:
+                    if 'name' in df_estaciones.columns:
+                        df_estaciones['station_name'] = df_estaciones['name']
+                
+                if 'station_lat' not in df_estaciones.columns:
+                    if 'lat' in df_estaciones.columns:
+                        df_estaciones['station_lat'] = df_estaciones['lat']
+                
+                if 'station_lon' not in df_estaciones.columns:
+                    if 'lon' in df_estaciones.columns:
+                        df_estaciones['station_lon'] = df_estaciones['lon']
+                
+                # Crear diccionario de estaciones: nombre -> (lat, lon)
+                estaciones_dict = {}
+                for _, row in df_estaciones.iterrows():
+                    nombre = row.get('station_name', None)
+                    lat = row.get('station_lat', None)
+                    lon = row.get('station_lon', None)
+                    
+                    if pd.notna(nombre) and pd.notna(lat) and pd.notna(lon):
+                        # Limpiar el nombre (quitar espacios extra, etc.)
+                        nombre_limpio = str(nombre).strip()
+                        estaciones_dict[nombre_limpio] = {
+                            'lat': float(lat),
+                            'lon': float(lon),
+                            'capacidad': row.get('station_capacity', row.get('capacity', 15))
+                        }
+                
+                return estaciones_dict
+        except Exception as e:
+            continue
+    
+    # Si no se encuentra, retornar diccionario vacío
+    return {}
+
 def load_model():
     """Carga el modelo Random Forest entrenado"""
     # Intentar diferentes rutas posibles
