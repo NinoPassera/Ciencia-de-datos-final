@@ -5,7 +5,8 @@ __pycache__/
 *.pth
 *.h5
 *.hdf5
-*.csv
+# Permitir dataset_modelo_final.csv para visualizaciones
+!dataset_modelo_final.csv
 *.json
 *.log
 .DS_Store
