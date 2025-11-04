@@ -86,7 +86,7 @@ def model_page():
             )
         )
         
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(chart, width='stretch')
     else:
         st.info("El modelo no tiene información de importancia de características.")
     
