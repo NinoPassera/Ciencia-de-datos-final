@@ -80,7 +80,7 @@ def plots_page():
                             title='Top 15 Características Más Importantes del Modelo'
                         )
                     )
-                    st.altair_chart(chart1, use_container_width=True)
+                    st.altair_chart(chart1, width='stretch')
             return
     except Exception as e:
         st.error(f"Error al cargar el dataset: {e}")
@@ -128,7 +128,7 @@ def plots_page():
             )
         )
         
-        st.altair_chart(chart1, use_container_width=True)
+        st.altair_chart(chart1, width='stretch')
     else:
         st.info("El modelo no tiene información de importancia de características.")
     
@@ -169,7 +169,7 @@ def plots_page():
         )
     )
     
-    st.altair_chart(chart2a, use_container_width=True)
+    st.altair_chart(chart2a, width='stretch')
     
     # Crear visualización de distribución por día de semana
     dias_nombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
@@ -202,7 +202,7 @@ def plots_page():
         )
     )
     
-    st.altair_chart(chart2b, use_container_width=True)
+    st.altair_chart(chart2b, width='stretch')
     
     st.markdown("---")
     
@@ -231,7 +231,7 @@ def plots_page():
             tooltip=[
                 alt.Tooltip('destino:N', title='Destino'),
                 alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=','),
-                alt.Tooltip('porcentaje:Q', title='Porcentaje', format='.2f', suffix='%')
+                alt.Tooltip('porcentaje:Q', title='Porcentaje', format='.2f')
             ],
             color=alt.Color('cantidad_viajes:Q', 
                           scale=alt.Scale(scheme='reds'), 
@@ -244,7 +244,7 @@ def plots_page():
         )
     )
     
-    st.altair_chart(chart3, use_container_width=True)
+    st.altair_chart(chart3, width='stretch')
     
     # Estadísticas adicionales
     col1, col2, col3, col4 = st.columns(4)
