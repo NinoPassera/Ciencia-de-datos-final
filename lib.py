@@ -221,17 +221,24 @@ def load_model():
     for model_path in model_paths:
         try:
             if os.path.exists(model_path):
+                # Verificar que el archivo no esté vacío
+                file_size = os.path.getsize(model_path)
+                if file_size == 0:
+                    continue
+                # Intentar cargar el modelo
                 modelo = joblib.load(model_path)
+                # Verificar que el modelo sea válido
+                if modelo is None:
+                    continue
                 return modelo
         except Exception as e:
+            # Log del error pero continuar con el siguiente path
+            import traceback
+            traceback.print_exc()
             continue
     
-    # Si no se encuentra, mostrar advertencia pero no error
-    try:
-        import streamlit as st
-        st.warning(f"⚠️ No se encontró el modelo. Algunas funcionalidades no estarán disponibles. Por favor, asegúrate de que el modelo esté en static/")
-    except:
-        pass
+    # Si no se encuentra, retornar None sin mostrar advertencia aquí
+    # (la advertencia se mostrará en las páginas que lo usen)
     return None
 
 

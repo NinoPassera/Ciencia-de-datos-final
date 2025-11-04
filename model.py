@@ -13,16 +13,34 @@ def model_page():
     st.title("🤖 Modelo de Predicción")
     st.markdown("---")
     
-    # Cargar modelo
-    modelo = load_model()
+    # Cargar modelo con manejo de errores
+    try:
+        modelo = load_model()
+    except Exception as e:
+        st.error(f"Error al cargar el modelo: {e}")
+        st.info("💡 La app puede funcionar sin el modelo, pero las predicciones no estarán disponibles.")
+        modelo = None
+    
     if modelo is None:
-        st.error("No se pudo cargar el modelo. Por favor, asegúrate de que el modelo esté en la carpeta static/")
+        st.warning("⚠️ No se pudo cargar el modelo. Algunas funcionalidades no estarán disponibles.")
+        st.info("💡 Asegúrate de que el modelo esté en la carpeta static/")
         return
     
-    # Cargar preprocessor
-    preprocessor = load_preprocessor()
+    # Cargar preprocessor con manejo de errores
+    try:
+        preprocessor = load_preprocessor()
+    except Exception as e:
+        st.error(f"Error al cargar el preprocessor: {e}")
+        st.info("💡 Intentando crear un preprocessor nuevo...")
+        try:
+            from lib import create_preprocessor
+            preprocessor = create_preprocessor()
+        except Exception as e2:
+            st.error(f"No se pudo crear el preprocessor: {e2}")
+            return
+    
     if preprocessor is None:
-        st.error("No se pudo cargar el preprocessor.")
+        st.error("No se pudo cargar o crear el preprocessor.")
         return
     
     # Mostrar información del modelo
