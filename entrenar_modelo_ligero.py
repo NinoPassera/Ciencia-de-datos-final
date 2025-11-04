@@ -72,23 +72,23 @@ def main():
     print(f"Entrenamiento: {len(X_train):,}")
     print(f"Prueba: {len(X_test):,}")
     
-    # Modelo RF LIGERO (hiperparámetros reducidos)
+    # Modelo RF ULTRA LIGERO (hiperparámetros reducidos para <100MB)
     print("\n" + "=" * 70)
-    print("CONFIGURACIÓN DEL MODELO LIGERO")
+    print("CONFIGURACIÓN DEL MODELO ULTRA LIGERO")
     print("=" * 70)
-    print("Hiperparámetros (reducidos para menor tamaño):")
-    print("  - n_estimators: 200 (vs 600 original)")
-    print("  - max_depth: 20 (vs 32 original)")
-    print("  - min_samples_split: 10 (igual)")
-    print("  - min_samples_leaf: 3 (vs 1 original)")
+    print("Hiperparámetros (reducidos para <100MB y Git normal):")
+    print("  - n_estimators: 100 (vs 600 original)")
+    print("  - max_depth: 15 (vs 32 original)")
+    print("  - min_samples_split: 15 (vs 10 original)")
+    print("  - min_samples_leaf: 5 (vs 1 original)")
     print("  - max_features: 0.5 (igual)")
     print("=" * 70)
     
     modelo = RandomForestClassifier(
-        n_estimators=200,        # Reducido de 600 a 200 (reduce tamaño ~3x)
-        max_depth=20,            # Reducido de 32 a 20 (reduce profundidad)
-        min_samples_split=10,    # Mantener igual
-        min_samples_leaf=3,      # Aumentado de 1 a 3 (árboles más pequeños)
+        n_estimators=100,        # Reducido de 200 a 100 (reduce tamaño ~2x)
+        max_depth=15,            # Reducido de 20 a 15 (reduce profundidad)
+        min_samples_split=15,    # Aumentado de 10 a 15 (árboles más pequeños)
+        min_samples_leaf=5,      # Aumentado de 3 a 5 (árboles más compactos)
         max_features=0.5,        # Mantener igual
         bootstrap=True,
         oob_score=True,
