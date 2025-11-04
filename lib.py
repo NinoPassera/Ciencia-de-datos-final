@@ -237,37 +237,31 @@ def load_model():
 
 def load_preprocessor():
     """Carga el preprocessor guardado"""
-    try:
-        preprocessor_path = "static/preprocessor.pkl"
-        preprocessor = joblib.load(preprocessor_path)
-        return preprocessor
-    except FileNotFoundError:
-        # Si no existe, crear uno nuevo
+    # Intentar diferentes rutas posibles
+    preprocessor_paths = [
+        "static/preprocessor.pkl",
+        "preprocessor.pkl",
+        "../prediccion/preprocessor.pkl"
+    ]
+    
+    for preprocessor_path in preprocessor_paths:
         try:
-            return create_preprocessor()
+            if os.path.exists(preprocessor_path):
+                preprocessor = joblib.load(preprocessor_path)
+                return preprocessor
         except Exception as e:
-            try:
-                import streamlit as st
-                st.warning(f"No se pudo crear el preprocessor: {e}")
-            except:
-                pass
-            return None
+            continue
+    
+    # Si no existe, crear uno nuevo
+    try:
+        return create_preprocessor()
     except Exception as e:
-        # Si no se puede cargar, crear uno nuevo
         try:
-            try:
-                import streamlit as st
-                st.warning(f"No se pudo cargar el preprocessor: {e}. Creando uno nuevo.")
-            except:
-                pass
-            return create_preprocessor()
-        except Exception as e2:
-            try:
-                import streamlit as st
-                st.error(f"Error al crear preprocessor: {e2}")
-            except:
-                pass
-            return None
+            import streamlit as st
+            st.warning(f"No se pudo crear el preprocessor: {e}")
+        except:
+            pass
+        return None
 
 
 def create_preprocessor():
