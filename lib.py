@@ -210,7 +210,26 @@ class FeatureSelector(BaseEstimator, TransformerMixin):
 # ============================================================================
 
 def load_stations():
-    """Carga las estaciones con sus nombres y coordenadas"""
+    """Carga las estaciones con sus nombres y coordenadas desde JSON"""
+    import json
+    
+    json_paths = [
+        "static/estaciones.json",
+        "estaciones.json",
+        "../prediccion/estaciones.json"
+    ]
+    
+    # Primero intentar cargar desde JSON (formato procesado)
+    for json_path in json_paths:
+        try:
+            if os.path.exists(json_path):
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    estaciones_dict = json.load(f)
+                    return estaciones_dict
+        except Exception as e:
+            continue
+    
+    # Si no se encuentra JSON, intentar cargar desde CSV (fallback)
     estaciones_paths = [
         "../prediccion/station_data_enriched (1).csv",
         "prediccion/station_data_enriched (1).csv",
@@ -237,19 +256,27 @@ def load_stations():
                 
                 # Crear diccionario de estaciones: nombre -> (lat, lon)
                 estaciones_dict = {}
+                estaciones_vistas = set()  # Para evitar duplicados
+                
                 for _, row in df_estaciones.iterrows():
                     nombre = row.get('station_name', None)
                     lat = row.get('station_lat', None)
                     lon = row.get('station_lon', None)
                     
                     if pd.notna(nombre) and pd.notna(lat) and pd.notna(lon):
-                        # Limpiar el nombre (quitar espacios extra, etc.)
+                        # Limpiar el nombre
                         nombre_limpio = str(nombre).strip()
-                        estaciones_dict[nombre_limpio] = {
-                            'lat': float(lat),
-                            'lon': float(lon),
-                            'capacidad': row.get('station_capacity', row.get('capacity', 15))
-                        }
+                        
+                        # Crear clave única basada en nombre y coordenadas
+                        clave = (nombre_limpio, round(float(lat), 5), round(float(lon), 5))
+                        
+                        if clave not in estaciones_vistas:
+                            estaciones_vistas.add(clave)
+                            estaciones_dict[nombre_limpio] = {
+                                'lat': float(lat),
+                                'lon': float(lon),
+                                'capacidad': row.get('station_capacity', row.get('capacity', 15))
+                            }
                 
                 return estaciones_dict
         except Exception as e:

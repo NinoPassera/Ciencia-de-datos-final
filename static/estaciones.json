@@ -1,0 +1,452 @@
+{
+  "01- ALAMEDA": {
+    "lat": -32.88167,
+    "lon": -68.83681,
+    "capacidad": 14
+  },
+  "02- PASEO VILLALONGA": {
+    "lat": -32.88407,
+    "lon": -68.84838,
+    "capacidad": 17
+  },
+  "03- PARQUE O´HIGGINS": {
+    "lat": -32.88477,
+    "lon": -68.8297,
+    "capacidad": 18
+  },
+  "04- PLAZA SAN MARTIN": {
+    "lat": -32.88718,
+    "lon": -68.84085,
+    "capacidad": 10
+  },
+  "05- PLAZA INDEPENDENCIA": {
+    "lat": -32.88939,
+    "lon": -68.84484,
+    "capacidad": 16
+  },
+  "06- ARISTIDES VILLANUEVA": {
+    "lat": -32.89142,
+    "lon": -68.86011,
+    "capacidad": 15
+  },
+  "07- KM 0": {
+    "lat": -32.890715045452176,
+    "lon": -68.83887344047548,
+    "capacidad": 20
+  },
+  "08- HOSPITAL CENTRAL": {
+    "lat": -32.89245,
+    "lon": -68.83443,
+    "capacidad": 13
+  },
+  "10- MUNICIPALIDAD CIUDAD": {
+    "lat": -32.89809,
+    "lon": -68.84308,
+    "capacidad": 11
+  },
+  "11- PEDRO MOLINA": {
+    "lat": -32.89633,
+    "lon": -68.84604,
+    "capacidad": 10
+  },
+  "12- BELGRANO": {
+    "lat": -32.8938,
+    "lon": -68.85132,
+    "capacidad": 19
+  },
+  "13- MARIANO MORENO": {
+    "lat": -32.90279,
+    "lon": -68.85315,
+    "capacidad": 12
+  },
+  "14- PLAZOLETA  BARRAQUERO": {
+    "lat": -32.90392,
+    "lon": -68.84246,
+    "capacidad": 10
+  },
+  "15- ARIZU": {
+    "lat": -32.908628458011854,
+    "lon": -68.843851167984,
+    "capacidad": 14
+  },
+  "16- PELLEGRINI": {
+    "lat": -32.90844,
+    "lon": -68.85218,
+    "capacidad": 12
+  },
+  "17- CHACABUCO": {
+    "lat": -32.91599,
+    "lon": -68.8507,
+    "capacidad": 10
+  },
+  "18- ANZORENA": {
+    "lat": -32.9163,
+    "lon": -68.84637,
+    "capacidad": 15
+  },
+  "19- PARQUE MITRE": {
+    "lat": -32.92154,
+    "lon": -68.84014,
+    "capacidad": 9
+  },
+  "20- PLAZA GODOY CRUZ": {
+    "lat": -32.924805161663286,
+    "lon": -68.84405040740965,
+    "capacidad": 16
+  },
+  "21- PARQUE ALFONSIN": {
+    "lat": -32.92152,
+    "lon": -68.85168,
+    "capacidad": 15
+  },
+  "22- PARQUE SAN VICENTE": {
+    "lat": -32.93178365730272,
+    "lon": -68.8513809636956,
+    "capacidad": 13
+  },
+  "23_PUENTE CICLOVÍA": {
+    "lat": -32.94002,
+    "lon": -68.85025,
+    "capacidad": 15
+  },
+  "24_PARQUE BENEGAS": {
+    "lat": -32.95237,
+    "lon": -68.85304,
+    "capacidad": 14
+  },
+  "25_PARQUE LINEAL": {
+    "lat": -32.8703,
+    "lon": -68.84326,
+    "capacidad": 12
+  },
+  "26_CARRODILLA": {
+    "lat": -32.95887,
+    "lon": -68.85259,
+    "capacidad": 14
+  },
+  "09_TERMINAL": {
+    "lat": -32.893892,
+    "lon": -68.830968,
+    "capacidad": 10
+  },
+  "35- HOSPITAL MILITAR": {
+    "lat": -32.8802579,
+    "lon": -68.8598689,
+    "capacidad": 12
+  },
+  "28- PLAZA DR. MATONS": {
+    "lat": -32.873507,
+    "lon": -68.851832,
+    "capacidad": 10
+  },
+  "27- PARQUE CENTRAL": {
+    "lat": -32.878504,
+    "lon": -68.839175,
+    "capacidad": 16
+  },
+  "29- LOS CONSTITUYENTES": {
+    "lat": -32.86487,
+    "lon": -68.849,
+    "capacidad": 7
+  },
+  "31-PASEO MOSCONI": {
+    "lat": -32.8621688,
+    "lon": -68.8327164,
+    "capacidad": 15
+  },
+  "Hub-prueba": {
+    "lat": -32.88644001979814,
+    "lon": -68.86474374219898,
+    "capacidad": 25
+  },
+  "34- PLAZA PEDRO DEL CASTILLO": {
+    "lat": -32.879188,
+    "lon": -68.828269,
+    "capacidad": 15
+  },
+  "30- SAN ANTONIO": {
+    "lat": -32.86998,
+    "lon": -68.82757,
+    "capacidad": 14
+  },
+  "38- PLAZA NESTOR LENCINAS": {
+    "lat": -32.8934375,
+    "lon": -68.8244375,
+    "capacidad": 11
+  },
+  "42-JULIO LE PARC": {
+    "lat": -32.889117,
+    "lon": -68.815511,
+    "capacidad": 15
+  },
+  "46- PANAMERICANA": {
+    "lat": -32.960232,
+    "lon": -68.864111,
+    "capacidad": 15
+  },
+  "48- PLAZA CHACRAS": {
+    "lat": -32.986616,
+    "lon": -68.882568,
+    "capacidad": 12
+  },
+  "47- BESARES": {
+    "lat": -32.981171,
+    "lon": -68.875186,
+    "capacidad": 8
+  },
+  "39- EJERCITO DE LOS ANDES": {
+    "lat": -32.9106107,
+    "lon": -68.8326816,
+    "capacidad": 10
+  },
+  "40- PEDRO VARGAS": {
+    "lat": -32.902574,
+    "lon": -68.833297,
+    "capacidad": 11
+  },
+  "41- ESCUELA JORGE A CALLE": {
+    "lat": -32.903721,
+    "lon": -68.826308,
+    "capacidad": 10
+  },
+  "45- PROGRESO": {
+    "lat": -32.9264,
+    "lon": -68.833396,
+    "capacidad": 10
+  },
+  "44- PLAZA MOISES LEBENSOHN": {
+    "lat": -32.900404,
+    "lon": -68.820714,
+    "capacidad": 11
+  },
+  "37- ESCUELA GUILLERMO CANO": {
+    "lat": -32.88904,
+    "lon": -68.821927,
+    "capacidad": 11
+  },
+  "TALLER BICITRAN": {
+    "lat": -32.8798711,
+    "lon": -68.82992639999999,
+    "capacidad": 40
+  },
+  "49- FUENTE DE LOS CONTINENTES": {
+    "lat": -32.889321,
+    "lon": -68.866387,
+    "capacidad": 28
+  },
+  "50- CLUB REGATAS": {
+    "lat": -32.894291,
+    "lon": -68.867444,
+    "capacidad": 15
+  },
+  "52- PLAZOLETA KOLTON": {
+    "lat": -32.901498,
+    "lon": -68.864646,
+    "capacidad": 12
+  },
+  "51- GIMNASIO N°1": {
+    "lat": -32.895967,
+    "lon": -68.859202,
+    "capacidad": 8
+  },
+  "43- REMEDIOS ESCALADA": {
+    "lat": -32.916141,
+    "lon": -68.834443,
+    "capacidad": 8
+  },
+  "53- PLAZA BELGRANO": {
+    "lat": -32.900792,
+    "lon": -68.847875,
+    "capacidad": 10
+  },
+  "72- EX CARBOMETAL": {
+    "lat": -32.981438,
+    "lon": -68.859658,
+    "capacidad": 13
+  },
+  "54- VILLA HIPODRÓMO": {
+    "lat": -32.91035069645056,
+    "lon": -68.8602657857373,
+    "capacidad": 10
+  },
+  "55- POMPEYA": {
+    "lat": -32.91644000854086,
+    "lon": -68.85927823854797,
+    "capacidad": 10
+  },
+  "58- TIBURCIO BENEGAS": {
+    "lat": -32.937894,
+    "lon": -68.858251,
+    "capacidad": 10
+  },
+  "73- ALMIRANTE BROWN": {
+    "lat": -33.00572,
+    "lon": -68.887128,
+    "capacidad": 15
+  },
+  "74- PLAZA MARCOS BURGOS": {
+    "lat": -32.850084,
+    "lon": -68.841061,
+    "capacidad": 17
+  },
+  "76- PARQUE LINEAL LAS HERAS": {
+    "lat": -32.855822,
+    "lon": -68.859313,
+    "capacidad": 10
+  },
+  "75- PARQUE DE LA FAMILIA": {
+    "lat": -32.847748,
+    "lon": -68.859978,
+    "capacidad": 13
+  },
+  "77-IRRIGACIÓN": {
+    "lat": -32.882269,
+    "lon": -68.839932,
+    "capacidad": 7
+  },
+  "69- AVELLANEDA": {
+    "lat": -32.8940215,
+    "lon": -68.78999050000002,
+    "capacidad": 10
+  },
+  "67- HOSPITAL NOTTI": {
+    "lat": -32.897426739931674,
+    "lon": -68.80394746494292,
+    "capacidad": 10
+  },
+  "68- MUNICIPALIDAD DE GUAYMALLEN": {
+    "lat": -32.9000779,
+    "lon": -68.787878,
+    "capacidad": 12
+  },
+  "61- PUENTE OLIVE": {
+    "lat": -32.93879,
+    "lon": -68.8412191,
+    "capacidad": 13
+  },
+  "60- CERVANTES": {
+    "lat": -32.947801,
+    "lon": -68.843117,
+    "capacidad": 8
+  },
+  "62- ACCESO SUR": {
+    "lat": -32.940632,
+    "lon": -68.829547,
+    "capacidad": 10
+  },
+  "57-  HOSPITAL EL CARMEN": {
+    "lat": -32.9277425,
+    "lon": -68.8586956,
+    "capacidad": 10
+  },
+  "33- HOSPITAL UNIVERSITARIO": {
+    "lat": -32.8684436,
+    "lon": -68.8544052,
+    "capacidad": 9
+  },
+  "36- SAN LUIS": {
+    "lat": -32.853704,
+    "lon": -68.834074,
+    "capacidad": 10
+  },
+  "32- BOULEVARD PERÚ": {
+    "lat": -32.8625917,
+    "lon": -68.8419395,
+    "capacidad": 10
+  },
+  "70- JUAN JOSÉ PASO": {
+    "lat": -32.9659987,
+    "lon": -68.8545931,
+    "capacidad": 13
+  },
+  "83- SUIPACHA": {
+    "lat": -32.87811512074015,
+    "lon": -68.84990367976226,
+    "capacidad": 12
+  },
+  "82- SANTIAGO DEL ESTERO": {
+    "lat": -32.87068161934787,
+    "lon": -68.83403607665177,
+    "capacidad": 10
+  },
+  "85- CORREO ARGENTINO": {
+    "lat": -32.89518,
+    "lon": -68.84067,
+    "capacidad": 12
+  },
+  "86- PLAZOLETA GUALBERTO GODOY": {
+    "lat": -32.88518,
+    "lon": -68.85631,
+    "capacidad": 10
+  },
+  "80- POLIDEPORTIVO QUINO": {
+    "lat": -32.908960210849635,
+    "lon": -68.80811418095092,
+    "capacidad": 10
+  },
+  "87- MORÓN": {
+    "lat": -32.899543,
+    "lon": -68.83748,
+    "capacidad": 10
+  },
+  "79- LAS TORRES": {
+    "lat": -32.90483,
+    "lon": -68.80048,
+    "capacidad": 12
+  },
+  "78- MENDOZA SHOPPING": {
+    "lat": -32.90099,
+    "lon": -68.79983,
+    "capacidad": 12
+  },
+  "90- PLAZA SARMIENTO": {
+    "lat": -32.88777,
+    "lon": -68.83259,
+    "capacidad": 10
+  },
+  "88- RAWSON": {
+    "lat": -32.95348,
+    "lon": -68.84698,
+    "capacidad": 10
+  },
+  "91-DORREGO": {
+    "lat": -32.898053549965404,
+    "lon": -68.82878788339767,
+    "capacidad": 9
+  },
+  "92- ROTONDA DEL ARADO": {
+    "lat": -33.031611,
+    "lon": -68.908444,
+    "capacidad": 10
+  },
+  "94- PARQUE FERRI": {
+    "lat": -33.0372700739747,
+    "lon": -68.87440372681426,
+    "capacidad": 14
+  },
+  "93-TABOADA": {
+    "lat": -33.03820991693236,
+    "lon": -68.8811190462799,
+    "capacidad": 10
+  },
+  "65-BOULEVARD BALCARCE": {
+    "lat": -32.9174005,
+    "lon": -68.8406212,
+    "capacidad": 7
+  },
+  "66- CAP. DE FRAGATA MOYANO": {
+    "lat": -32.9139231,
+    "lon": -68.8291291,
+    "capacidad": 10
+  },
+  "56- ANTARTIDA ARGENTINA": {
+    "lat": -32.922204,
+    "lon": -68.859877,
+    "capacidad": 12
+  },
+  "95 - PREDIO DE LA VIRGEN": {
+    "lat": -32.896626,
+    "lon": -68.817864,
+    "capacidad": 12
+  }
+}
