@@ -264,6 +264,20 @@ def model_page():
                 format_func=lambda x: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][x],
                 help="Día de la semana favorito del usuario"
             )
+            
+            # Selector de destino favorito
+            if estaciones:
+                nombres_estaciones = sorted(list(estaciones.keys()))
+                destino_favorito_nombre = st.selectbox(
+                    "Destino Favorito del Usuario",
+                    options=[""] + nombres_estaciones,
+                    index=0,
+                    help="Destino más frecuente del usuario (opcional, mejora la predicción)",
+                    key="destino_favorito_selector"
+                )
+                destino_favorito = destino_favorito_nombre if destino_favorito_nombre else None
+            else:
+                destino_favorito = None
         
         # Frecuencias semanales
         st.markdown("#### Frecuencias Semanales (Opcional)")
@@ -311,7 +325,8 @@ def model_page():
             'frecuencia_jueves': frecuencia_jueves,
             'frecuencia_viernes': frecuencia_viernes,
             'frecuencia_sabado': frecuencia_sabado,
-            'frecuencia_domingo': frecuencia_domingo
+            'frecuencia_domingo': frecuencia_domingo,
+            'destino_favorito': destino_favorito
         }
         
         try:

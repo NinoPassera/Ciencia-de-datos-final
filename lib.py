@@ -148,6 +148,9 @@ class FeatureEngineeringGeografica(BaseEstimator, TransformerMixin):
 class FeatureEngineeringUsuario(BaseEstimator, TransformerMixin):
     """Calcula features de usuario (usa valores por defecto si no hay historial)"""
     
+    def __init__(self, label_encoder=None):
+        self.label_encoder = label_encoder
+    
     def fit(self, X, y=None):
         # Calcular valores promedio del dataset de entrenamiento
         self.valores_default = {
@@ -166,7 +169,8 @@ class FeatureEngineeringUsuario(BaseEstimator, TransformerMixin):
             'frecuencia_jueves': 4,
             'frecuencia_viernes': 5,
             'frecuencia_sabado': 3,
-            'frecuencia_domingo': 2
+            'frecuencia_domingo': 2,
+            'destino_favorito': None  # Se calculará en transform
         }
         return self
     
@@ -176,10 +180,30 @@ class FeatureEngineeringUsuario(BaseEstimator, TransformerMixin):
         # Agregar features de usuario si no existen
         for feature, default in self.valores_default.items():
             if feature not in X.columns:
-                X[feature] = default
+                if feature == 'destino_favorito':
+                    # Si no hay destino_favorito, usar el destino más frecuente global
+                    X[feature] = None
+                else:
+                    X[feature] = default
         
         # Asegurar que semanas_activas no sea 0 para evitar división por cero
         X['semanas_activas'] = X['semanas_activas'].replace(0, 1)
+        
+        # Calcular destino_favorito_encoded
+        if 'destino_favorito_encoded' not in X.columns:
+            X['destino_favorito_encoded'] = 0
+            if self.label_encoder is not None:
+                # Si hay destino_favorito, codificarlo
+                if 'destino_favorito' in X.columns:
+                    mask = X['destino_favorito'].notna()
+                    if mask.any():
+                        try:
+                            X.loc[mask, 'destino_favorito_encoded'] = self.label_encoder.transform(
+                                X.loc[mask, 'destino_favorito'].astype(str)
+                            )
+                        except:
+                            # Si falla la codificación, usar 0
+                            X.loc[mask, 'destino_favorito_encoded'] = 0
         
         return X
 
@@ -286,9 +310,11 @@ def load_stations():
     return {}
 
 def load_model():
-    """Carga el modelo Random Forest entrenado"""
-    # Intentar diferentes rutas posibles
+    """Carga el modelo Random Forest entrenado (con destino favorito)"""
+    # Intentar diferentes rutas posibles (priorizar modelo con destino favorito)
     model_paths = [
+        "modelos/modelo_con_destino_favorito.pkl",
+        "../modelos/modelo_con_destino_favorito.pkl",
         "static/modelo_random_forest_final_tunado.pkl",
         "modelo_random_forest_final_tunado.pkl",
         "../prediccion/modelo_random_forest_final_tunado.pkl"
@@ -315,6 +341,24 @@ def load_model():
     
     # Si no se encuentra, retornar None sin mostrar advertencia aquí
     # (la advertencia se mostrará en las páginas que lo usen)
+    return None
+
+def load_label_encoder():
+    """Carga el LabelEncoder para destino favorito"""
+    # Intentar diferentes rutas posibles
+    le_paths = [
+        "modelos/label_encoder_destino_favorito.pkl",
+        "../modelos/label_encoder_destino_favorito.pkl"
+    ]
+    
+    for le_path in le_paths:
+        try:
+            if os.path.exists(le_path):
+                le = joblib.load(le_path)
+                return le
+        except Exception as e:
+            continue
+    
     return None
 
 
@@ -351,7 +395,7 @@ def create_preprocessor():
     """Crea un preprocessor con todos los transformers"""
     from sklearn.pipeline import Pipeline
     
-    # Features finales en el orden correcto
+    # Features finales en el orden correcto (incluyendo destino_favorito_encoded)
     features_finales = [
         'origen_lat', 'origen_lon',
         'hora_salida', 'dia_semana', 'mes',
@@ -360,7 +404,8 @@ def create_preprocessor():
         'capacidad_origen', 'estaciones_cercanas_origen', 'variedad_destinos', 'variedad_origenes',
         'consistencia_horaria', 'distancia_promedio_usuario', 'dia_favorito',
         'frecuencia_lunes', 'frecuencia_martes', 'frecuencia_miercoles',
-        'frecuencia_jueves', 'frecuencia_viernes', 'frecuencia_sabado', 'frecuencia_domingo'
+        'frecuencia_jueves', 'frecuencia_viernes', 'frecuencia_sabado', 'frecuencia_domingo',
+        'destino_favorito_encoded'
     ]
     
     # Intentar cargar datos de estaciones si existen
@@ -378,10 +423,13 @@ def create_preprocessor():
     except:
         pass
     
+    # Intentar cargar LabelEncoder para destino favorito
+    label_encoder = load_label_encoder()
+    
     preprocessor = Pipeline([
         ('temporal', FeatureEngineeringTemporal()),
         ('geografica', FeatureEngineeringGeografica(estaciones_data=estaciones_data)),
-        ('usuario', FeatureEngineeringUsuario()),
+        ('usuario', FeatureEngineeringUsuario(label_encoder=label_encoder)),
         ('selector', FeatureSelector(features_finales))
     ])
     
