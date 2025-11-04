@@ -1,17 +1,17 @@
 __pycache__/
 *.pyc
 *.pyo
-# Permitir archivos en static/ (modelos y preprocessors)
-!static/*.pkl
-!static/*.json
 *.pkl
 *.pth
 *.h5
 *.hdf5
-# Permitir dataset_modelo_final.csv para visualizaciones
-!dataset_modelo_final.csv
 *.json
 *.log
+# Permitir archivos en static/ (modelos y preprocessors)
+!static/*.pkl
+!static/*.json
+# Permitir dataset_modelo_final.csv para visualizaciones
+!dataset_modelo_final.csv
 .DS_Store
 .env
 .venv
