@@ -141,9 +141,6 @@ def model_page():
             if estacion_seleccionada:
                 origen_lat = estaciones[estacion_seleccionada]['lat']
                 origen_lon = estaciones[estacion_seleccionada]['lon']
-                
-                # Mostrar coordenadas (se actualiza en tiempo real)
-                st.info(f"📍 **Coordenadas**: Lat {origen_lat:.5f}, Lon {origen_lon:.5f}")
             else:
                 origen_lat = -32.89
                 origen_lon = -68.84
@@ -179,9 +176,10 @@ def model_page():
         col1, col2 = st.columns(2)
         
         with col1:
-            # Mostrar coordenadas seleccionadas (solo lectura dentro del form)
+            # Mostrar coordenadas seleccionadas (más grande y sin fondo azul)
             if estaciones:
-                st.caption(f"📍 Coordenadas seleccionadas: Lat {origen_lat:.5f}, Lon {origen_lon:.5f}")
+                st.markdown(f"### 📍 Coordenadas")
+                st.markdown(f"**Latitud**: {origen_lat:.5f}  \n**Longitud**: {origen_lon:.5f}")
         
         with col2:
             hora_salida = st.slider(
