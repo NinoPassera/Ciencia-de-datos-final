@@ -309,13 +309,13 @@ def model_page():
                 )
             )
             
-            st.altair_chart(chart, use_container_width=True)
+            st.altair_chart(chart, width='stretch')
             
             # Tabla de resultados
             st.markdown("### Tabla de Resultados")
             pred_df['probabilidad'] = (pred_df['probabilidad'] * 100).round(2)
             pred_df.columns = ['Destino', 'Probabilidad (%)']
-            st.dataframe(pred_df, use_container_width=True)
+            st.dataframe(pred_df, width='stretch')
             
         except Exception as e:
             st.error(f"Error al procesar la predicción: {e}")

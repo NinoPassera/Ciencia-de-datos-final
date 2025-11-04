@@ -362,7 +362,7 @@ def render_feature_importance(modelo, top_n=15):
         )
     )
     
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width='stretch')
 
 
 
