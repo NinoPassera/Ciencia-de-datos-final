@@ -1,3 +1,4 @@
 *.pkl filter=lfs diff=lfs merge=lfs -text
 # Excluir static/*.pkl de LFS (modelo <100MB puede ir en Git normal)
 static/*.pkl !filter !diff !merge -text
+static/modelo_con_destino_favorito.pkl filter=lfs diff=lfs merge=lfs -text
