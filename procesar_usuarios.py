@@ -148,16 +148,20 @@ def main():
         viajes = int(row['viajes_totales']) if pd.notna(row['viajes_totales']) else 0
         semanas = int(row['semanas_activas']) if pd.notna(row['semanas_activas']) else 0
         
-        if viajes < 10:
-            tipo = "Usuario Ocasional"
-        elif viajes < 30:
-            tipo = "Usuario Regular"
-        elif viajes < 50:
-            tipo = "Usuario Frecuente"
-        else:
-            tipo = "Usuario Activo"
+        # El usuario_key es el nombre real del usuario
+        nombre_real = usuario_key
         
-        nombre_usuario = f"{tipo} - {viajes} viajes"
+        # Crear nombre descriptivo con nombre real, tipo y viajes
+        if viajes < 10:
+            tipo = "Ocasional"
+        elif viajes < 30:
+            tipo = "Regular"
+        elif viajes < 50:
+            tipo = "Frecuente"
+        else:
+            tipo = "Activo"
+        
+        nombre_usuario = f"{nombre_real} - {tipo} ({viajes} viajes)"
         
         # Crear diccionario del usuario
         usuarios_dict[usuario_key] = {
