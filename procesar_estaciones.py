@@ -69,6 +69,9 @@ def main():
         print("[ERROR] No se encontró la columna 'station_lon' o 'lon'")
         return
     
+    # Estaciones a excluir
+    estaciones_excluidas = ["Hub-prueba", "TALLER BICITRAN"]
+    
     # Extraer estaciones únicas por nombre
     print("\nProcesando estaciones únicas...")
     
@@ -84,6 +87,10 @@ def main():
         if pd.notna(nombre) and pd.notna(lat) and pd.notna(lon):
             # Limpiar el nombre
             nombre_limpio = str(nombre).strip()
+            
+            # Excluir estaciones no deseadas
+            if nombre_limpio in estaciones_excluidas:
+                continue
             
             # Si ya existe este nombre, verificar si son las mismas coordenadas
             if nombre_limpio in estaciones_por_nombre:
@@ -112,6 +119,7 @@ def main():
             }
     
     print(f"[OK] Estaciones únicas encontradas: {len(estaciones_por_nombre)}")
+    print(f"[OK] Estaciones excluidas: {estaciones_excluidas}")
     
     # Crear carpeta static si no existe
     if not os.path.exists("static"):

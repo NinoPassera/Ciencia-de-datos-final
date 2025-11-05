@@ -154,11 +154,6 @@
     "lon": -68.8327164,
     "capacidad": 15
   },
-  "Hub-prueba": {
-    "lat": -32.88644001979814,
-    "lon": -68.86474374219898,
-    "capacidad": 25
-  },
   "34- PLAZA PEDRO DEL CASTILLO": {
     "lat": -32.879188,
     "lon": -68.828269,
@@ -223,11 +218,6 @@
     "lat": -32.88904,
     "lon": -68.821927,
     "capacidad": 11
-  },
-  "TALLER BICITRAN": {
-    "lat": -32.8798711,
-    "lon": -68.82992639999999,
-    "capacidad": 40
   },
   "49- FUENTE DE LOS CONTINENTES": {
     "lat": -32.889321,
