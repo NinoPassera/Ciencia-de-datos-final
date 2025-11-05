@@ -250,7 +250,7 @@ def plots_page():
     st.markdown("""
     Este heatmap muestra la probabilidad de que un viaje desde una estación origen termine en una estación destino.
     Los valores representan el porcentaje de viajes desde cada origen hacia cada destino.
-    Solo se muestran las estaciones más frecuentes (top 15) para mejor legibilidad.
+    Puedes seleccionar qué estaciones quieres visualizar en el heatmap.
     """)
     
     # Verificar que existen las columnas origen y destino
@@ -261,79 +261,121 @@ def plots_page():
         # Crear DataFrame con origen y destino (similar a df_viajes)
         df_viajes = df[['origen', 'destino']].copy()
         
-        # Top 15 por origen y destino
-        top_origen = df_viajes["origen"].value_counts().head(15).index
-        top_destino = df_viajes["destino"].value_counts().head(15).index
+        # Obtener todas las estaciones únicas (origen y destino)
+        todas_estaciones_origen = sorted(df_viajes["origen"].unique())
+        todas_estaciones_destino = sorted(df_viajes["destino"].unique())
         
-        # Matriz Origen x Destino, filtrada a top-15
-        matriz_top = pd.crosstab(df_viajes["origen"], df_viajes["destino"])
-        matriz_top = matriz_top.loc[matriz_top.index.intersection(top_origen), 
-                                    matriz_top.columns.intersection(top_destino)]
+        # Top 15 por origen y destino (para valores por defecto)
+        top_origen = df_viajes["origen"].value_counts().head(15).index.tolist()
+        top_destino = df_viajes["destino"].value_counts().head(15).index.tolist()
         
-        # Orden por totales (ayuda a ver estructura)
-        filas = matriz_top.sum(axis=1).sort_values(ascending=False).index
-        cols = matriz_top.sum(axis=0).sort_values(ascending=False).index
-        matriz_top = matriz_top.loc[filas, cols]
+        # Selector de estaciones (opcional, si no selecciona nada usa top 15)
+        col_selector1, col_selector2 = st.columns(2)
         
-        # Usar el mismo orden en ambos ejes
-        # Orden común: respetá el orden de columnas (cols) y quedate con las que también están en filas
-        orden_comun = cols.intersection(filas, sort=False)
+        with col_selector1:
+            estaciones_origen_seleccionadas = st.multiselect(
+                "📍 Estaciones Origen (Opcional)",
+                options=todas_estaciones_origen,
+                default=[],
+                help="Selecciona estaciones específicas de origen. Si no seleccionas ninguna, se mostrarán las top 15 por defecto."
+            )
         
-        # Si no hay intersección, usar las que hay
-        if len(orden_comun) == 0:
-            orden_comun = filas.intersection(cols, sort=False)
+        with col_selector2:
+            estaciones_destino_seleccionadas = st.multiselect(
+                "🎯 Estaciones Destino (Opcional)",
+                options=todas_estaciones_destino,
+                default=[],
+                help="Selecciona estaciones específicas de destino. Si no seleccionas ninguna, se mostrarán las top 15 por defecto."
+            )
         
-        # Reindexar filas y columnas con el mismo orden (cuadrada y sincronizada)
-        if len(orden_comun) > 0:
-            matriz_sync = matriz_top.reindex(index=orden_comun, columns=orden_comun, fill_value=0)
+        # Usar selección del usuario o top 15 por defecto
+        if len(estaciones_origen_seleccionadas) == 0:
+            estaciones_origen_finales = top_origen
         else:
-            # Si no hay intersección, usar todas las que hay pero ordenadas
-            matriz_sync = matriz_top.copy()
+            estaciones_origen_finales = estaciones_origen_seleccionadas
         
-        # Normalización por fila (probabilidad de destino dado origen)
-        matriz_norm = matriz_sync.div(matriz_sync.sum(axis=1), axis=0).fillna(0)
+        if len(estaciones_destino_seleccionadas) == 0:
+            estaciones_destino_finales = top_destino
+        else:
+            estaciones_destino_finales = estaciones_destino_seleccionadas
         
-        # Crear el heatmap con matplotlib/seaborn
-        fig, ax = plt.subplots(figsize=(16, 12))
-        
-        # Convertir a porcentajes y reemplazar 0 con NaN para mejor visualización
-        matriz_plot = matriz_norm.replace(0, np.nan) * 100
-        
-        sns.heatmap(
-            matriz_plot,
-            annot=True, 
-            fmt=".1f",  # mostrar valores con un decimal
-            cmap="Purples",
-            cbar=True,
-            linewidths=0.6, 
-            linecolor="#DDDDDD",
-            square=True,
-            ax=ax,
-            cbar_kws={'label': 'Probabilidad (%)'}
-        )
-        
-        ax.set_title("Probabilidad de destino (%) dado origen", fontsize=16, pad=20)
-        ax.set_xlabel("Destino", fontsize=12)
-        ax.set_ylabel("Origen", fontsize=12)
-        plt.xticks(rotation=45, ha="right")
-        plt.yticks(rotation=0)
-        plt.tight_layout()
-        
-        # Mostrar en Streamlit
-        st.pyplot(fig)
-        plt.close(fig)
-        
-        # Estadísticas de la matriz
-        st.markdown("**Información de la Matriz:**")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Estaciones Origen", len(matriz_sync))
-        with col2:
-            st.metric("Estaciones Destino", len(matriz_sync.columns))
-        with col3:
-            # Calcular el porcentaje de viajes cubiertos por estos top
-            total_viajes = len(df_viajes)
-            viajes_en_matriz = matriz_sync.sum().sum()
-            porcentaje = (viajes_en_matriz / total_viajes * 100) if total_viajes > 0 else 0
-            st.metric("Cobertura", f"{porcentaje:.1f}%")
+        # Validar que hay estaciones para mostrar
+        if len(estaciones_origen_finales) == 0 or len(estaciones_destino_finales) == 0:
+            st.warning("⚠️ No hay estaciones disponibles para mostrar.")
+        else:
+            # Matriz Origen x Destino, filtrada según selección
+            matriz_top = pd.crosstab(df_viajes["origen"], df_viajes["destino"])
+            matriz_top = matriz_top.loc[matriz_top.index.intersection(estaciones_origen_finales), 
+                                        matriz_top.columns.intersection(estaciones_destino_finales)]
+            
+            # Validar que hay datos después de filtrar
+            if matriz_top.empty:
+                st.warning("⚠️ No hay datos disponibles para las estaciones seleccionadas.")
+            else:
+                # Orden por totales (ayuda a ver estructura)
+                filas = matriz_top.sum(axis=1).sort_values(ascending=False).index
+                cols = matriz_top.sum(axis=0).sort_values(ascending=False).index
+                matriz_top = matriz_top.loc[filas, cols]
+                
+                # Usar el mismo orden en ambos ejes
+                # Orden común: respetá el orden de columnas (cols) y quedate con las que también están en filas
+                orden_comun = cols.intersection(filas, sort=False)
+                
+                # Si no hay intersección, usar las que hay
+                if len(orden_comun) == 0:
+                    orden_comun = filas.intersection(cols, sort=False)
+                
+                # Reindexar filas y columnas con el mismo orden (cuadrada y sincronizada)
+                if len(orden_comun) > 0:
+                    matriz_sync = matriz_top.reindex(index=orden_comun, columns=orden_comun, fill_value=0)
+                else:
+                    # Si no hay intersección, usar todas las que hay pero ordenadas
+                    matriz_sync = matriz_top.copy()
+                
+                # Normalización por fila (probabilidad de destino dado origen)
+                matriz_norm = matriz_sync.div(matriz_sync.sum(axis=1), axis=0).fillna(0)
+                
+                # Crear el heatmap con matplotlib/seaborn
+                fig, ax = plt.subplots(figsize=(16, 12))
+                
+                # Convertir a porcentajes y reemplazar 0 con NaN para mejor visualización
+                matriz_plot = matriz_norm.replace(0, np.nan) * 100
+                
+                sns.heatmap(
+                    matriz_plot,
+                    annot=True, 
+                    fmt=".1f",  # mostrar valores con un decimal
+                    cmap="Purples",
+                    cbar=True,
+                    linewidths=0.6, 
+                    linecolor="#DDDDDD",
+                    square=True,
+                    ax=ax,
+                    cbar_kws={'label': 'Probabilidad (%)'}
+                )
+                
+                ax.set_title("Probabilidad de destino (%) dado origen", fontsize=16, pad=20)
+                ax.set_xlabel("Destino", fontsize=12)
+                ax.set_ylabel("Origen", fontsize=12)
+                plt.xticks(rotation=45, ha="right")
+                plt.yticks(rotation=0)
+                plt.tight_layout()
+                
+                # Mostrar en Streamlit
+                st.pyplot(fig)
+                plt.close(fig)
+                
+                # Estadísticas de la matriz
+                st.markdown("**Información de la Matriz:**")
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Estaciones Origen", len(matriz_sync))
+                with col2:
+                    st.metric("Estaciones Destino", len(matriz_sync.columns))
+                with col3:
+                    # Calcular el porcentaje de viajes cubiertos por estas estaciones
+                    total_viajes = len(df_viajes)
+                    viajes_en_matriz = matriz_sync.sum().sum()
+                    porcentaje = (viajes_en_matriz / total_viajes * 100) if total_viajes > 0 else 0
+                    st.metric("Cobertura", f"{porcentaje:.1f}%")
 
