@@ -495,7 +495,8 @@ def render_feature_importance(modelo, top_n=15):
         .mark_bar()
         .encode(
             x=alt.X('importance:Q', title='Importancia', axis=alt.Axis(format='.4f')),
-            y=alt.Y('feature:N', sort='-x', title='Característica'),
+            y=alt.Y('feature:N', sort='-x', title='Característica',
+                   axis=alt.Axis(labelLimit=1000)),
             tooltip=['feature', alt.Tooltip('importance:Q', format='.4f')],
             color=alt.Color('importance:Q', scale=alt.Scale(scheme='blues'), legend=None)
         )

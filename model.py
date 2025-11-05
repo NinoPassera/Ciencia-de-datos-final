@@ -92,7 +92,8 @@ def model_page():
                        axis=alt.Axis(format='.4f')),
                 y=alt.Y('caracteristica:N', 
                        sort='-x', 
-                       title='Característica'),
+                       title='Característica',
+                       axis=alt.Axis(labelLimit=1000)),
                 tooltip=[
                     alt.Tooltip('caracteristica:N', title='Característica'),
                     alt.Tooltip('importancia:Q', title='Importancia', format='.4f')

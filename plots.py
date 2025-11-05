@@ -65,7 +65,8 @@ def plots_page():
                                    axis=alt.Axis(format='.4f')),
                             y=alt.Y('caracteristica:N', 
                                    sort='-x', 
-                                   title='Característica'),
+                                   title='Característica',
+                                   axis=alt.Axis(labelLimit=1000)),
                             tooltip=[
                                 alt.Tooltip('caracteristica:N', title='Característica'),
                                 alt.Tooltip('importancia:Q', title='Importancia', format='.4f')
@@ -112,7 +113,8 @@ def plots_page():
                        scale=alt.Scale(domain=[0, imp_df['importancia'].max() * 1.1])),
                 y=alt.Y('caracteristica:N', 
                        sort='-x', 
-                       title='Característica'),
+                       title='Característica',
+                       axis=alt.Axis(labelLimit=1000)),
                 tooltip=[
                     alt.Tooltip('caracteristica:N', title='Característica'),
                     alt.Tooltip('importancia:Q', title='Importancia', format='.4f')
