@@ -16,14 +16,6 @@ def plots_page():
     st.title("📊 Visualizaciones Interactivas")
     st.markdown("---")
     
-    # Intentar cargar modelo para obtener importancia (opcional)
-    try:
-        from lib import load_model
-        modelo = load_model()
-    except:
-        modelo = None
-        st.warning("No se pudo cargar el modelo para mostrar importancia. Las visualizaciones de datos siguen disponibles.")
-    
     # Cargar datos del dataset
     try:
         # Intentar diferentes rutas posibles
@@ -45,175 +37,13 @@ def plots_page():
         if df is None:
             st.warning("⚠️ No se encontró el dataset. Las visualizaciones de datos no estarán disponibles.")
             st.info("💡 Puedes copiar el dataset desde la carpeta prediccion/ a esta carpeta o ajustar la ruta.")
-            # Continuar sin dataset - mostrar solo importancia del modelo si está disponible
-            if modelo is not None:
-                st.markdown("---")
-                st.markdown("## 1. Importancia de Características del Modelo")
-                if hasattr(modelo, 'feature_importances_'):
-                    importance = modelo.feature_importances_
-                    feature_names = modelo.feature_names_in_ if hasattr(modelo, 'feature_names_in_') else [f'feature_{i}' for i in range(len(importance))]
-                    
-                    # Mapeo de nombres de features a nombres descriptivos en español
-                    nombres_descriptivos = {
-                        'lat_destino_favorito': 'Latitud Destino Favorito',
-                        'lon_destino_favorito': 'Longitud Destino Favorito',
-                        'destino_favorito_encoded': 'Destino Favorito (Codificado)',
-                        'origen_lat': 'Latitud Origen',
-                        'origen_lon': 'Longitud Origen',
-                        'hora_salida': 'Hora de Salida',
-                        'dia_semana': 'Día de la Semana',
-                        'mes': 'Mes',
-                        'viajes_totales': 'Viajes Totales',
-                        'semanas_activas': 'Semanas Activas',
-                        'viajes_por_semana': 'Viajes por Semana',
-                        'duracion_promedio_min': 'Duración Promedio (min)',
-                        'periodo_dia_numerico': 'Período del Día',
-                        'es_fin_semana': 'Es Fin de Semana',
-                        'es_hora_pico': 'Es Hora Pico',
-                        'zona_origen': 'Zona Origen',
-                        'capacidad_origen': 'Capacidad Estación Origen',
-                        'estaciones_cercanas_origen': 'Estaciones Cercanas Origen',
-                        'variedad_destinos': 'Variedad Destinos',
-                        'variedad_origenes': 'Variedad Orígenes',
-                        'consistencia_horaria': 'Consistencia Horaria',
-                        'distancia_promedio_usuario': 'Distancia Promedio Usuario',
-                        'dia_favorito': 'Día Favorito',
-                        'frecuencia_lunes': 'Frecuencia Lunes',
-                        'frecuencia_martes': 'Frecuencia Martes',
-                        'frecuencia_miercoles': 'Frecuencia Miércoles',
-                        'frecuencia_jueves': 'Frecuencia Jueves',
-                        'frecuencia_viernes': 'Frecuencia Viernes',
-                        'frecuencia_sabado': 'Frecuencia Sábado',
-                        'frecuencia_domingo': 'Frecuencia Domingo'
-                    }
-                    
-                    # Aplicar nombres descriptivos
-                    feature_names_descriptivos = [nombres_descriptivos.get(name, name) for name in feature_names]
-                    
-                    imp_df = pd.DataFrame({
-                        'caracteristica': feature_names_descriptivos,
-                        'importancia': importance
-                    }).sort_values('importancia', ascending=False).head(15)
-                    
-                    chart1 = (
-                        alt.Chart(imp_df)
-                        .mark_bar()
-                        .encode(
-                            x=alt.X('importancia:Q', 
-                                   title='Importancia (Gini)', 
-                                   axis=alt.Axis(format='.4f')),
-                            y=alt.Y('caracteristica:N', 
-                                   sort='-x', 
-                                   title='Característica',
-                                   axis=alt.Axis(labelLimit=1000)),
-                            tooltip=[
-                                alt.Tooltip('caracteristica:N', title='Característica'),
-                                alt.Tooltip('importancia:Q', title='Importancia', format='.4f')
-                            ],
-                            color=alt.Color('importancia:Q', 
-                                           scale=alt.Scale(scheme='blues'), 
-                                           legend=None)
-                        )
-                        .properties(
-                            width=700,
-                            height=500,
-                            title='Top 15 Características Más Importantes del Modelo'
-                        )
-                    )
-                    st.altair_chart(chart1, width='stretch')
             return
     except Exception as e:
         st.error(f"Error al cargar el dataset: {e}")
         return
     
-    # Visualización 1: Importancia de Características
-    st.markdown("## 1. Importancia de Características del Modelo")
-    st.markdown("""
-    Este gráfico muestra las características más importantes para el modelo Random Forest.
-    La importancia se calcula como la reducción promedio de impureza que aporta cada característica.
-    """)
-    
-    if hasattr(modelo, 'feature_importances_'):
-        importance = modelo.feature_importances_
-        feature_names = modelo.feature_names_in_ if hasattr(modelo, 'feature_names_in_') else [f'feature_{i}' for i in range(len(importance))]
-        
-        # Mapeo de nombres de features a nombres descriptivos en español
-        nombres_descriptivos = {
-            'lat_destino_favorito': 'Latitud Destino Favorito',
-            'lon_destino_favorito': 'Longitud Destino Favorito',
-            'destino_favorito_encoded': 'Destino Favorito (Codificado)',
-            'origen_lat': 'Latitud Origen',
-            'origen_lon': 'Longitud Origen',
-            'hora_salida': 'Hora de Salida',
-            'dia_semana': 'Día de la Semana',
-            'mes': 'Mes',
-            'viajes_totales': 'Viajes Totales',
-            'semanas_activas': 'Semanas Activas',
-            'viajes_por_semana': 'Viajes por Semana',
-            'duracion_promedio_min': 'Duración Promedio (min)',
-            'periodo_dia_numerico': 'Período del Día',
-            'es_fin_semana': 'Es Fin de Semana',
-            'es_hora_pico': 'Es Hora Pico',
-            'zona_origen': 'Zona Origen',
-            'capacidad_origen': 'Capacidad Estación Origen',
-            'estaciones_cercanas_origen': 'Estaciones Cercanas Origen',
-            'variedad_destinos': 'Variedad Destinos',
-            'variedad_origenes': 'Variedad Orígenes',
-            'consistencia_horaria': 'Consistencia Horaria',
-            'distancia_promedio_usuario': 'Distancia Promedio Usuario',
-            'dia_favorito': 'Día Favorito',
-            'frecuencia_lunes': 'Frecuencia Lunes',
-            'frecuencia_martes': 'Frecuencia Martes',
-            'frecuencia_miercoles': 'Frecuencia Miércoles',
-            'frecuencia_jueves': 'Frecuencia Jueves',
-            'frecuencia_viernes': 'Frecuencia Viernes',
-            'frecuencia_sabado': 'Frecuencia Sábado',
-            'frecuencia_domingo': 'Frecuencia Domingo'
-        }
-        
-        # Aplicar nombres descriptivos
-        feature_names_descriptivos = [nombres_descriptivos.get(name, name) for name in feature_names]
-        
-        imp_df = pd.DataFrame({
-            'caracteristica': feature_names_descriptivos,
-            'importancia': importance
-        }).sort_values('importancia', ascending=False).head(15)
-        
-        chart1 = (
-            alt.Chart(imp_df)
-            .mark_bar()
-            .encode(
-                x=alt.X('importancia:Q', 
-                       title='Importancia (Gini)', 
-                       axis=alt.Axis(format='.4f'),
-                       scale=alt.Scale(domain=[0, imp_df['importancia'].max() * 1.1])),
-                y=alt.Y('caracteristica:N', 
-                       sort='-x', 
-                       title='Característica',
-                       axis=alt.Axis(labelLimit=1000)),
-                tooltip=[
-                    alt.Tooltip('caracteristica:N', title='Característica'),
-                    alt.Tooltip('importancia:Q', title='Importancia', format='.4f')
-                ],
-                color=alt.Color('importancia:Q', 
-                               scale=alt.Scale(scheme='blues'), 
-                               legend=None)
-            )
-            .properties(
-                width=700,
-                height=500,
-                title='Top 15 Características Más Importantes del Modelo'
-            )
-        )
-        
-        st.altair_chart(chart1, width='stretch')
-    else:
-        st.info("El modelo no tiene información de importancia de características.")
-    
-    st.markdown("---")
-    
-    # Visualización 2: Distribución Temporal de Viajes
-    st.markdown("## 2. Distribución Temporal de Viajes")
+    # Visualización 1: Distribución Temporal de Viajes
+    st.markdown("## 1. Distribución Temporal de Viajes")
     st.markdown("""
     Análisis de patrones temporales en los viajes. Muestra la distribución de viajes por hora del día
     y día de la semana, revelando patrones de comportamiento de los usuarios.
@@ -284,8 +114,8 @@ def plots_page():
     
     st.markdown("---")
     
-    # Visualización 3: Análisis Geográfico - Top Destinos
-    st.markdown("## 3. Top Destinos Más Frecuentes")
+    # Visualización 2: Análisis Geográfico - Top Destinos
+    st.markdown("## 2. Top Destinos Más Frecuentes")
     st.markdown("""
     Análisis de los destinos más populares en el sistema. Muestra las estaciones destino más frecuentes,
     lo que ayuda a entender los patrones de movilidad y demanda en diferentes zonas.
@@ -337,8 +167,8 @@ def plots_page():
     
     st.markdown("---")
     
-    # Visualización 4: Matriz Origen-Destino (Heatmap)
-    st.markdown("## 4. Matriz de Probabilidad Origen-Destino")
+    # Visualización 3: Matriz Origen-Destino (Heatmap)
+    st.markdown("## 3. Matriz de Probabilidad Origen-Destino")
     st.markdown("""
     Este heatmap muestra la probabilidad de que un viaje desde una estación origen termine en una estación destino.
     Los valores representan el porcentaje de viajes desde cada origen hacia cada destino.
