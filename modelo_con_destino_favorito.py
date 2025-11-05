@@ -160,7 +160,7 @@ def main():
     print("ENTRENANDO MODELO RANDOM FOREST")
     print("=" * 70)
     print("Hiperparámetros (optimizados para <100MB):")
-    print("  - n_estimators: 100 (balance tamaño/performance)")
+    print("  - n_estimators: 95 (balance tamaño/performance)")
     print("  - max_depth: 15 (balance)")
     print("  - min_samples_split: 15 (balance)")
     print("  - min_samples_leaf: 5 (balance)")
@@ -169,10 +169,10 @@ def main():
     print("=" * 70)
     
     modelo = RandomForestClassifier(
-        n_estimators=100,         # Volver a 100 (equilibrio tamaño/performance)
-        max_depth=15,             # Volver a 15 (equilibrio)
-        min_samples_split=15,    # Volver a 15 (equilibrio)
-        min_samples_leaf=5,      # Volver a 5 (equilibrio)
+        n_estimators=95,         # Reducido ligeramente para estar bajo 100MB
+        max_depth=15,             # Mantener igual
+        min_samples_split=15,    # Mantener igual
+        min_samples_leaf=5,      # Mantener igual
         max_features=0.5,         # Mantener igual
         bootstrap=True,
         oob_score=True,

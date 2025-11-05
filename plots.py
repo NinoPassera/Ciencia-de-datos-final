@@ -51,8 +51,45 @@ def plots_page():
                     importance = modelo.feature_importances_
                     feature_names = modelo.feature_names_in_ if hasattr(modelo, 'feature_names_in_') else [f'feature_{i}' for i in range(len(importance))]
                     
+                    # Mapeo de nombres de features a nombres descriptivos en español
+                    nombres_descriptivos = {
+                        'lat_destino_favorito': 'Latitud Destino Favorito',
+                        'lon_destino_favorito': 'Longitud Destino Favorito',
+                        'destino_favorito_encoded': 'Destino Favorito (Codificado)',
+                        'origen_lat': 'Latitud Origen',
+                        'origen_lon': 'Longitud Origen',
+                        'hora_salida': 'Hora de Salida',
+                        'dia_semana': 'Día de la Semana',
+                        'mes': 'Mes',
+                        'viajes_totales': 'Viajes Totales',
+                        'semanas_activas': 'Semanas Activas',
+                        'viajes_por_semana': 'Viajes por Semana',
+                        'duracion_promedio_min': 'Duración Promedio (min)',
+                        'periodo_dia_numerico': 'Período del Día',
+                        'es_fin_semana': 'Es Fin de Semana',
+                        'es_hora_pico': 'Es Hora Pico',
+                        'zona_origen': 'Zona Origen',
+                        'capacidad_origen': 'Capacidad Estación Origen',
+                        'estaciones_cercanas_origen': 'Estaciones Cercanas Origen',
+                        'variedad_destinos': 'Variedad Destinos',
+                        'variedad_origenes': 'Variedad Orígenes',
+                        'consistencia_horaria': 'Consistencia Horaria',
+                        'distancia_promedio_usuario': 'Distancia Promedio Usuario',
+                        'dia_favorito': 'Día Favorito',
+                        'frecuencia_lunes': 'Frecuencia Lunes',
+                        'frecuencia_martes': 'Frecuencia Martes',
+                        'frecuencia_miercoles': 'Frecuencia Miércoles',
+                        'frecuencia_jueves': 'Frecuencia Jueves',
+                        'frecuencia_viernes': 'Frecuencia Viernes',
+                        'frecuencia_sabado': 'Frecuencia Sábado',
+                        'frecuencia_domingo': 'Frecuencia Domingo'
+                    }
+                    
+                    # Aplicar nombres descriptivos
+                    feature_names_descriptivos = [nombres_descriptivos.get(name, name) for name in feature_names]
+                    
                     imp_df = pd.DataFrame({
-                        'caracteristica': feature_names,
+                        'caracteristica': feature_names_descriptivos,
                         'importancia': importance
                     }).sort_values('importancia', ascending=False).head(15)
                     
