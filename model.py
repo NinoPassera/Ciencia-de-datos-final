@@ -272,7 +272,8 @@ def model_page():
             default_variedad_origenes = usuario_data['variedad_origenes']
             default_consistencia_horaria = usuario_data['consistencia_horaria']
             default_dia_favorito = usuario_data['dia_favorito']
-            default_destino_favorito = usuario_data.get('destino_favorito', None)
+            default_lat_destino_favorito = usuario_data.get('lat_destino_favorito', 0.0)
+            default_lon_destino_favorito = usuario_data.get('lon_destino_favorito', 0.0)
             default_frecuencia_lunes = usuario_data['frecuencia_lunes']
             default_frecuencia_martes = usuario_data['frecuencia_martes']
             default_frecuencia_miercoles = usuario_data['frecuencia_miercoles']
@@ -289,7 +290,8 @@ def model_page():
             default_variedad_origenes = 5
             default_consistencia_horaria = 3.0
             default_dia_favorito = 0
-            default_destino_favorito = None
+            default_lat_destino_favorito = 0.0
+            default_lon_destino_favorito = 0.0
             default_frecuencia_lunes = 5
             default_frecuencia_martes = 4
             default_frecuencia_miercoles = 4
@@ -368,13 +370,25 @@ def model_page():
                 key=f"dia_favorito_{usuario_key_suffix}"
             )
             
-            # Selector de destino favorito
+            # Selector de destino favorito (para obtener coordenadas)
             if estaciones:
                 nombres_estaciones = sorted(list(estaciones.keys()))
-                # Determinar índice inicial si hay destino favorito
+                
+                # Buscar estación por coordenadas si hay coordenadas por defecto
                 index_destino = 0
-                if default_destino_favorito and default_destino_favorito in nombres_estaciones:
-                    index_destino = nombres_estaciones.index(default_destino_favorito) + 1
+                if default_lat_destino_favorito != 0.0 and default_lon_destino_favorito != 0.0:
+                    # Buscar estación más cercana a las coordenadas por defecto
+                    min_dist = float('inf')
+                    estacion_cercana = None
+                    for nombre, datos in estaciones.items():
+                        if isinstance(datos, dict) and 'lat' in datos and 'lon' in datos:
+                            dist = ((default_lat_destino_favorito - datos['lat'])**2 + 
+                                   (default_lon_destino_favorito - datos['lon'])**2)**0.5
+                            if dist < min_dist:
+                                min_dist = dist
+                                estacion_cercana = nombre
+                    if estacion_cercana and estacion_cercana in nombres_estaciones:
+                        index_destino = nombres_estaciones.index(estacion_cercana) + 1
                 
                 destino_favorito_nombre = st.selectbox(
                     "Destino Favorito del Usuario",
@@ -383,9 +397,18 @@ def model_page():
                     help="Destino más frecuente del usuario (opcional, mejora la predicción)",
                     key=f"destino_favorito_{usuario_key_suffix}"
                 )
-                destino_favorito = destino_favorito_nombre if destino_favorito_nombre else None
+                # Convertir nombre de estación a coordenadas
+                if destino_favorito_nombre and destino_favorito_nombre in estaciones:
+                    lat_destino_favorito = estaciones[destino_favorito_nombre]['lat']
+                    lon_destino_favorito = estaciones[destino_favorito_nombre]['lon']
+                else:
+                    # Si no hay selección, usar coordenadas por defecto del usuario
+                    lat_destino_favorito = default_lat_destino_favorito
+                    lon_destino_favorito = default_lon_destino_favorito
             else:
-                destino_favorito = None
+                # Si no hay estaciones, usar coordenadas por defecto
+                lat_destino_favorito = default_lat_destino_favorito
+                lon_destino_favorito = default_lon_destino_favorito
         
         # Frecuencias semanales
         st.markdown("#### Frecuencias Semanales (Opcional)")
@@ -434,7 +457,8 @@ def model_page():
             'frecuencia_viernes': frecuencia_viernes,
             'frecuencia_sabado': frecuencia_sabado,
             'frecuencia_domingo': frecuencia_domingo,
-            'destino_favorito': destino_favorito
+            'lat_destino_favorito': lat_destino_favorito,
+            'lon_destino_favorito': lon_destino_favorito
         }
         
         try:

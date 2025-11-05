@@ -148,8 +148,8 @@ class FeatureEngineeringGeografica(BaseEstimator, TransformerMixin):
 class FeatureEngineeringUsuario(BaseEstimator, TransformerMixin):
     """Calcula features de usuario (usa valores por defecto si no hay historial)"""
     
-    def __init__(self, label_encoder=None):
-        self.label_encoder = label_encoder
+    def __init__(self):
+        pass
     
     def fit(self, X, y=None):
         # Calcular valores promedio del dataset de entrenamiento
@@ -189,21 +189,12 @@ class FeatureEngineeringUsuario(BaseEstimator, TransformerMixin):
         # Asegurar que semanas_activas no sea 0 para evitar división por cero
         X['semanas_activas'] = X['semanas_activas'].replace(0, 1)
         
-        # Calcular destino_favorito_encoded
-        if 'destino_favorito_encoded' not in X.columns:
-            X['destino_favorito_encoded'] = 0
-            if self.label_encoder is not None:
-                # Si hay destino_favorito, codificarlo
-                if 'destino_favorito' in X.columns:
-                    mask = X['destino_favorito'].notna()
-                    if mask.any():
-                        try:
-                            X.loc[mask, 'destino_favorito_encoded'] = self.label_encoder.transform(
-                                X.loc[mask, 'destino_favorito'].astype(str)
-                            )
-                        except:
-                            # Si falla la codificación, usar 0
-                            X.loc[mask, 'destino_favorito_encoded'] = 0
+        # No necesitamos calcular destino_favorito_encoded, usamos coordenadas directamente
+        # Las coordenadas lat_destino_favorito y lon_destino_favorito deben venir ya en X
+        if 'lat_destino_favorito' not in X.columns:
+            X['lat_destino_favorito'] = 0
+        if 'lon_destino_favorito' not in X.columns:
+            X['lon_destino_favorito'] = 0
         
         return X
 
@@ -422,30 +413,19 @@ def create_preprocessor(modelo=None):
         'frecuencia_jueves', 'frecuencia_viernes', 'frecuencia_sabado', 'frecuencia_domingo'
     ]
     
-    # Detectar si el modelo espera destino_favorito_encoded
+    # Detectar si el modelo espera coordenadas de destino favorito
     usar_destino_favorito = False
     if modelo is not None:
-        # Verificar si el modelo tiene feature_names_in_ y si incluye destino_favorito_encoded
+        # Verificar si el modelo tiene feature_names_in_ y si incluye lat_destino_favorito o lon_destino_favorito
         if hasattr(modelo, 'feature_names_in_'):
-            if 'destino_favorito_encoded' in modelo.feature_names_in_:
+            if 'lat_destino_favorito' in modelo.feature_names_in_ or 'lon_destino_favorito' in modelo.feature_names_in_:
                 usar_destino_favorito = True
-        # También verificar si hay LabelEncoder disponible (indicador de modelo con destino favorito)
-        label_encoder = load_label_encoder()
-        if label_encoder is not None:
-            usar_destino_favorito = True
-    else:
-        # Si no hay modelo cargado, verificar si hay LabelEncoder disponible
-        label_encoder = load_label_encoder()
-        if label_encoder is not None:
-            usar_destino_favorito = True
     
     # Construir lista de features finales
     if usar_destino_favorito:
-        features_finales = features_base + ['destino_favorito_encoded']
-        label_encoder = load_label_encoder()
+        features_finales = features_base + ['lat_destino_favorito', 'lon_destino_favorito']
     else:
         features_finales = features_base
-        label_encoder = None
     
     # Intentar cargar datos de estaciones si existen
     estaciones_data = None
@@ -465,7 +445,7 @@ def create_preprocessor(modelo=None):
     preprocessor = Pipeline([
         ('temporal', FeatureEngineeringTemporal()),
         ('geografica', FeatureEngineeringGeografica(estaciones_data=estaciones_data)),
-        ('usuario', FeatureEngineeringUsuario(label_encoder=label_encoder)),
+        ('usuario', FeatureEngineeringUsuario()),
         ('selector', FeatureSelector(features_finales))
     ])
     

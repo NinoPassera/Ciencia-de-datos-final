@@ -92,57 +92,13 @@ def main():
     # Crear diccionario de usuarios
     usuarios_dict = {}
     
-    # Cargar estaciones para obtener nombre del destino favorito
-    estaciones_dict = {}
-    estaciones_paths = [
-        "static/estaciones.json",
-        "estaciones.json",
-        "../prediccion/estaciones.json"
-    ]
-    
-    for path in estaciones_paths:
-        if os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    estaciones_json = json.load(f)
-                    # Convertir a diccionario: (lat, lon) -> nombre
-                    for nombre, datos in estaciones_json.items():
-                        if isinstance(datos, dict) and 'lat' in datos and 'lon' in datos:
-                            lat = round(float(datos['lat']), 5)
-                            lon = round(float(datos['lon']), 5)
-                            estaciones_dict[(lat, lon)] = nombre
-                break
-            except:
-                continue
-    
-    # Función para buscar estación por coordenadas
-    def buscar_estacion_por_coordenadas(lat, lon):
-        if pd.isna(lat) or pd.isna(lon):
-            return None
-        key = (round(float(lat), 5), round(float(lon), 5))
-        if key in estaciones_dict:
-            return estaciones_dict[key]
-        # Buscar más cercana
-        min_dist = float('inf')
-        estacion_cercana = None
-        for (est_lat, est_lon), nombre in estaciones_dict.items():
-            dist = ((lat - est_lat)**2 + (lon - est_lon)**2)**0.5
-            if dist < min_dist:
-                min_dist = dist
-                estacion_cercana = nombre
-        return estacion_cercana if min_dist < 0.01 else None
-    
     # Procesar cada usuario
     for _, row in usuarios_resumen.iterrows():
         usuario_key = row['Usuario_key']
         
-        # Obtener destino favorito por coordenadas
-        destino_favorito = None
-        if pd.notna(row['lat_destino_favorito']) and pd.notna(row['lon_destino_favorito']):
-            destino_favorito = buscar_estacion_por_coordenadas(
-                row['lat_destino_favorito'],
-                row['lon_destino_favorito']
-            )
+        # Usar coordenadas directamente (sin buscar nombre)
+        lat_destino_favorito = float(row['lat_destino_favorito']) if pd.notna(row['lat_destino_favorito']) else 0.0
+        lon_destino_favorito = float(row['lon_destino_favorito']) if pd.notna(row['lon_destino_favorito']) else 0.0
         
         # Crear nombre descriptivo para el usuario
         viajes = int(row['viajes_totales']) if pd.notna(row['viajes_totales']) else 0
@@ -182,7 +138,8 @@ def main():
             'frecuencia_viernes': int(row['frecuencia_viernes']) if pd.notna(row['frecuencia_viernes']) else 5,
             'frecuencia_sabado': int(row['frecuencia_sabado']) if pd.notna(row['frecuencia_sabado']) else 3,
             'frecuencia_domingo': int(row['frecuencia_domingo']) if pd.notna(row['frecuencia_domingo']) else 2,
-            'destino_favorito': destino_favorito
+            'lat_destino_favorito': lat_destino_favorito,
+            'lon_destino_favorito': lon_destino_favorito
         }
     
     # Limitar a usuarios más representativos (top 50 por viajes)
