@@ -1,7 +1,7 @@
 Features del modelo con destino favorito:
 ======================================================================
 
-Total features: 28
+Total features: 29
 
 Features originales:
   - origen_lat
@@ -35,4 +35,5 @@ Features mejoradas:
   - frecuencia_domingo
 
 Features nuevas:
-  - destino_favorito_encoded
+  - lat_destino_favorito
+  - lon_destino_favorito

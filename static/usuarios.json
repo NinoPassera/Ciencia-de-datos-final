@@ -17,7 +17,8 @@
     "frecuencia_viernes": 63,
     "frecuencia_sabado": 17,
     "frecuencia_domingo": 2,
-    "destino_favorito": "90- PLAZA SARMIENTO"
+    "lat_destino_favorito": -32.88777,
+    "lon_destino_favorito": -68.83259
   },
   "MARIA LAURA ROJAS": {
     "nombre": "MARIA LAURA ROJAS - Activo (387 viajes)",
@@ -37,7 +38,8 @@
     "frecuencia_viernes": 67,
     "frecuencia_sabado": 77,
     "frecuencia_domingo": 80,
-    "destino_favorito": "41- ESCUELA JORGE A CALLE"
+    "lat_destino_favorito": -32.903721,
+    "lon_destino_favorito": -68.826308
   },
   "JUAN IGNACIO SARMIENTO": {
     "nombre": "JUAN IGNACIO SARMIENTO - Activo (374 viajes)",
@@ -57,7 +59,8 @@
     "frecuencia_viernes": 67,
     "frecuencia_sabado": 22,
     "frecuencia_domingo": 0,
-    "destino_favorito": "TALLER BICITRAN"
+    "lat_destino_favorito": -32.8798711,
+    "lon_destino_favorito": -68.82992639999999
   },
   "MAJO VALLES": {
     "nombre": "MAJO VALLES - Activo (289 viajes)",
@@ -77,7 +80,8 @@
     "frecuencia_viernes": 46,
     "frecuencia_sabado": 32,
     "frecuencia_domingo": 10,
-    "destino_favorito": "82- SANTIAGO DEL ESTERO"
+    "lat_destino_favorito": -32.87068161934787,
+    "lon_destino_favorito": -68.83403607665177
   },
   "GUILLE RODRIGUEZ": {
     "nombre": "GUILLE RODRIGUEZ - Activo (276 viajes)",
@@ -97,7 +101,8 @@
     "frecuencia_viernes": 36,
     "frecuencia_sabado": 1,
     "frecuencia_domingo": 1,
-    "destino_favorito": "39- EJERCITO DE LOS ANDES"
+    "lat_destino_favorito": -32.9106107,
+    "lon_destino_favorito": -68.8326816
   },
   "CARLOS RUIZ": {
     "nombre": "CARLOS RUIZ - Activo (264 viajes)",
@@ -117,7 +122,8 @@
     "frecuencia_viernes": 36,
     "frecuencia_sabado": 39,
     "frecuencia_domingo": 23,
-    "destino_favorito": "04- PLAZA SAN MARTIN"
+    "lat_destino_favorito": -32.88718,
+    "lon_destino_favorito": -68.84085
   },
   "FRANCO SUAREZ": {
     "nombre": "FRANCO SUAREZ - Activo (264 viajes)",
@@ -137,7 +143,8 @@
     "frecuencia_viernes": 38,
     "frecuencia_sabado": 37,
     "frecuencia_domingo": 8,
-    "destino_favorito": "87- MORÓN"
+    "lat_destino_favorito": -32.899543,
+    "lon_destino_favorito": -68.83748
   },
   "VICTORIA GARCIA GALIANO": {
     "nombre": "VICTORIA GARCIA GALIANO - Activo (262 viajes)",
@@ -157,7 +164,8 @@
     "frecuencia_viernes": 41,
     "frecuencia_sabado": 42,
     "frecuencia_domingo": 35,
-    "destino_favorito": "15- ARIZU"
+    "lat_destino_favorito": -32.908628458011854,
+    "lon_destino_favorito": -68.843851167984
   },
   "IVAN JOHNSON": {
     "nombre": "IVAN JOHNSON - Activo (261 viajes)",
@@ -177,7 +185,8 @@
     "frecuencia_viernes": 37,
     "frecuencia_sabado": 29,
     "frecuencia_domingo": 20,
-    "destino_favorito": "75- PARQUE DE LA FAMILIA"
+    "lat_destino_favorito": -32.847748,
+    "lon_destino_favorito": -68.859978
   },
   "JAVIER SOSA": {
     "nombre": "JAVIER SOSA - Activo (257 viajes)",
@@ -197,7 +206,8 @@
     "frecuencia_viernes": 36,
     "frecuencia_sabado": 43,
     "frecuencia_domingo": 58,
-    "destino_favorito": "31-PASEO MOSCONI"
+    "lat_destino_favorito": -32.8621688,
+    "lon_destino_favorito": -68.8327164
   },
   "TOMAS ALONSO SOTO ARAYA": {
     "nombre": "TOMAS ALONSO SOTO ARAYA - Activo (244 viajes)",
@@ -217,7 +227,8 @@
     "frecuencia_viernes": 36,
     "frecuencia_sabado": 36,
     "frecuencia_domingo": 21,
-    "destino_favorito": "01- ALAMEDA"
+    "lat_destino_favorito": -32.88167,
+    "lon_destino_favorito": -68.83681
   },
   "ENZO GARCIA": {
     "nombre": "ENZO GARCIA - Activo (242 viajes)",
@@ -237,7 +248,8 @@
     "frecuencia_viernes": 37,
     "frecuencia_sabado": 19,
     "frecuencia_domingo": 4,
-    "destino_favorito": "55- POMPEYA"
+    "lat_destino_favorito": -32.91644000854086,
+    "lon_destino_favorito": -68.85927823854797
   },
   "DIEGO ACOSTA": {
     "nombre": "DIEGO ACOSTA - Activo (239 viajes)",
@@ -257,7 +269,8 @@
     "frecuencia_viernes": 31,
     "frecuencia_sabado": 28,
     "frecuencia_domingo": 6,
-    "destino_favorito": "04- PLAZA SAN MARTIN"
+    "lat_destino_favorito": -32.88718,
+    "lon_destino_favorito": -68.84085
   },
   "GERMAN NAPOLITANO": {
     "nombre": "GERMAN NAPOLITANO - Activo (231 viajes)",
@@ -277,7 +290,8 @@
     "frecuencia_viernes": 37,
     "frecuencia_sabado": 43,
     "frecuencia_domingo": 34,
-    "destino_favorito": "38- PLAZA NESTOR LENCINAS"
+    "lat_destino_favorito": -32.8934375,
+    "lon_destino_favorito": -68.8244375
   },
   "DIEGO VELAZQUEZ MORENO": {
     "nombre": "DIEGO VELAZQUEZ MORENO - Activo (205 viajes)",
@@ -297,7 +311,8 @@
     "frecuencia_viernes": 33,
     "frecuencia_sabado": 42,
     "frecuencia_domingo": 37,
-    "destino_favorito": "91-DORREGO"
+    "lat_destino_favorito": -32.898053549965404,
+    "lon_destino_favorito": -68.82878788339767
   },
   "NICOLAS MASNU": {
     "nombre": "NICOLAS MASNU - Activo (193 viajes)",
@@ -317,7 +332,8 @@
     "frecuencia_viernes": 38,
     "frecuencia_sabado": 5,
     "frecuencia_domingo": 3,
-    "destino_favorito": "40- PEDRO VARGAS"
+    "lat_destino_favorito": -32.902574,
+    "lon_destino_favorito": -68.833297
   },
   "NICOLAS BENJAMIN RODRIGUEZ": {
     "nombre": "NICOLAS BENJAMIN RODRIGUEZ - Activo (192 viajes)",
@@ -337,7 +353,8 @@
     "frecuencia_viernes": 9,
     "frecuencia_sabado": 23,
     "frecuencia_domingo": 29,
-    "destino_favorito": "02- PASEO VILLALONGA"
+    "lat_destino_favorito": -32.88407,
+    "lon_destino_favorito": -68.84838
   },
   "NESTOR FABIAN SOTO": {
     "nombre": "NESTOR FABIAN SOTO - Activo (188 viajes)",
@@ -357,7 +374,8 @@
     "frecuencia_viernes": 25,
     "frecuencia_sabado": 11,
     "frecuencia_domingo": 15,
-    "destino_favorito": "45- PROGRESO"
+    "lat_destino_favorito": -32.9264,
+    "lon_destino_favorito": -68.833396
   },
   "FACUNDO MAXIMILIANO ROBLEDO": {
     "nombre": "FACUNDO MAXIMILIANO ROBLEDO - Activo (180 viajes)",
@@ -377,7 +395,8 @@
     "frecuencia_viernes": 20,
     "frecuencia_sabado": 3,
     "frecuencia_domingo": 1,
-    "destino_favorito": "07- KM 0"
+    "lat_destino_favorito": -32.890715045452176,
+    "lon_destino_favorito": -68.83887344047548
   },
   "GRACIELA MARINA GONZALEZ": {
     "nombre": "GRACIELA MARINA GONZALEZ - Activo (180 viajes)",
@@ -397,7 +416,8 @@
     "frecuencia_viernes": 46,
     "frecuencia_sabado": 12,
     "frecuencia_domingo": 7,
-    "destino_favorito": "56- ANTARTIDA ARGENTINA"
+    "lat_destino_favorito": -32.922204,
+    "lon_destino_favorito": -68.859877
   },
   "PAULI ACQUAVIVA": {
     "nombre": "PAULI ACQUAVIVA - Activo (177 viajes)",
@@ -417,7 +437,8 @@
     "frecuencia_viernes": 21,
     "frecuencia_sabado": 42,
     "frecuencia_domingo": 27,
-    "destino_favorito": "52- PLAZOLETA KOLTON"
+    "lat_destino_favorito": -32.901498,
+    "lon_destino_favorito": -68.864646
   },
   "SEBASTIAN CORNEJO": {
     "nombre": "SEBASTIAN CORNEJO - Activo (174 viajes)",
@@ -437,7 +458,8 @@
     "frecuencia_viernes": 31,
     "frecuencia_sabado": 38,
     "frecuencia_domingo": 37,
-    "destino_favorito": "74- PLAZA MARCOS BURGOS"
+    "lat_destino_favorito": -32.850084,
+    "lon_destino_favorito": -68.841061
   },
   "GERMAN AGUINAGA": {
     "nombre": "GERMAN AGUINAGA - Activo (172 viajes)",
@@ -457,7 +479,8 @@
     "frecuencia_viernes": 37,
     "frecuencia_sabado": 24,
     "frecuencia_domingo": 18,
-    "destino_favorito": "04- PLAZA SAN MARTIN"
+    "lat_destino_favorito": -32.88718,
+    "lon_destino_favorito": -68.84085
   },
   "FRANCISCO REDONDO": {
     "nombre": "FRANCISCO REDONDO - Activo (171 viajes)",
@@ -477,7 +500,8 @@
     "frecuencia_viernes": 40,
     "frecuencia_sabado": 13,
     "frecuencia_domingo": 10,
-    "destino_favorito": "40- PEDRO VARGAS"
+    "lat_destino_favorito": -32.902574,
+    "lon_destino_favorito": -68.833297
   },
   "JOSHUA SNIDER": {
     "nombre": "JOSHUA SNIDER - Activo (170 viajes)",
@@ -497,7 +521,8 @@
     "frecuencia_viernes": 23,
     "frecuencia_sabado": 20,
     "frecuencia_domingo": 24,
-    "destino_favorito": "16- PELLEGRINI"
+    "lat_destino_favorito": -32.90844,
+    "lon_destino_favorito": -68.85218
   },
   "NICOLAS PUSCAMA": {
     "nombre": "NICOLAS PUSCAMA - Activo (168 viajes)",
@@ -517,7 +542,8 @@
     "frecuencia_viernes": 33,
     "frecuencia_sabado": 25,
     "frecuencia_domingo": 3,
-    "destino_favorito": "34- PLAZA PEDRO DEL CASTILLO"
+    "lat_destino_favorito": -32.879188,
+    "lon_destino_favorito": -68.828269
   },
   "JULIAN MICIC DE ROSAS": {
     "nombre": "JULIAN MICIC DE ROSAS - Activo (163 viajes)",
@@ -537,7 +563,8 @@
     "frecuencia_viernes": 23,
     "frecuencia_sabado": 17,
     "frecuencia_domingo": 10,
-    "destino_favorito": "01- ALAMEDA"
+    "lat_destino_favorito": -32.88167,
+    "lon_destino_favorito": -68.83681
   },
   "MARIA AGUSTINA MICAMES": {
     "nombre": "MARIA AGUSTINA MICAMES - Activo (161 viajes)",
@@ -557,7 +584,8 @@
     "frecuencia_viernes": 0,
     "frecuencia_sabado": 13,
     "frecuencia_domingo": 2,
-    "destino_favorito": "11- PEDRO MOLINA"
+    "lat_destino_favorito": -32.89633,
+    "lon_destino_favorito": -68.84604
   },
   "PATRICIA SANTIAGO": {
     "nombre": "PATRICIA SANTIAGO - Activo (160 viajes)",
@@ -577,7 +605,8 @@
     "frecuencia_viernes": 38,
     "frecuencia_sabado": 0,
     "frecuencia_domingo": 0,
-    "destino_favorito": "16- PELLEGRINI"
+    "lat_destino_favorito": -32.90844,
+    "lon_destino_favorito": -68.85218
   },
   "TOBIAS MARROQUIN": {
     "nombre": "TOBIAS MARROQUIN - Activo (157 viajes)",
@@ -597,7 +626,8 @@
     "frecuencia_viernes": 30,
     "frecuencia_sabado": 14,
     "frecuencia_domingo": 11,
-    "destino_favorito": "16- PELLEGRINI"
+    "lat_destino_favorito": -32.90844,
+    "lon_destino_favorito": -68.85218
   },
   "BELEN RIO": {
     "nombre": "BELEN RIO - Activo (147 viajes)",
@@ -617,7 +647,8 @@
     "frecuencia_viernes": 22,
     "frecuencia_sabado": 9,
     "frecuencia_domingo": 11,
-    "destino_favorito": "53- PLAZA BELGRANO"
+    "lat_destino_favorito": -32.900792,
+    "lon_destino_favorito": -68.847875
   },
   "MARIA JOSE GUALTIERI": {
     "nombre": "MARIA JOSE GUALTIERI - Activo (144 viajes)",
@@ -637,7 +668,8 @@
     "frecuencia_viernes": 26,
     "frecuencia_sabado": 10,
     "frecuencia_domingo": 15,
-    "destino_favorito": "70- JUAN JOSÉ PASO"
+    "lat_destino_favorito": -32.9659987,
+    "lon_destino_favorito": -68.8545931
   },
   "NADYA MEDINA": {
     "nombre": "NADYA MEDINA - Activo (144 viajes)",
@@ -657,7 +689,8 @@
     "frecuencia_viernes": 23,
     "frecuencia_sabado": 0,
     "frecuencia_domingo": 0,
-    "destino_favorito": "18- ANZORENA"
+    "lat_destino_favorito": -32.9163,
+    "lon_destino_favorito": -68.84637
   },
   "PAULA AGUSTINA FERRARI": {
     "nombre": "PAULA AGUSTINA FERRARI - Activo (141 viajes)",
@@ -677,7 +710,8 @@
     "frecuencia_viernes": 22,
     "frecuencia_sabado": 13,
     "frecuencia_domingo": 1,
-    "destino_favorito": "05- PLAZA INDEPENDENCIA"
+    "lat_destino_favorito": -32.88939,
+    "lon_destino_favorito": -68.84484
   },
   "ALEXIS MASCIO": {
     "nombre": "ALEXIS MASCIO - Activo (140 viajes)",
@@ -697,7 +731,8 @@
     "frecuencia_viernes": 20,
     "frecuencia_sabado": 12,
     "frecuencia_domingo": 15,
-    "destino_favorito": "13- MARIANO MORENO"
+    "lat_destino_favorito": -32.90279,
+    "lon_destino_favorito": -68.85315
   },
   "AGUSTIN DE STEFANO": {
     "nombre": "AGUSTIN DE STEFANO - Activo (139 viajes)",
@@ -717,7 +752,8 @@
     "frecuencia_viernes": 24,
     "frecuencia_sabado": 5,
     "frecuencia_domingo": 1,
-    "destino_favorito": "TALLER BICITRAN"
+    "lat_destino_favorito": -32.8798711,
+    "lon_destino_favorito": -68.82992639999999
   },
   "DAVID AVILA": {
     "nombre": "DAVID AVILA - Activo (136 viajes)",
@@ -737,7 +773,8 @@
     "frecuencia_viernes": 21,
     "frecuencia_sabado": 20,
     "frecuencia_domingo": 20,
-    "destino_favorito": "04- PLAZA SAN MARTIN"
+    "lat_destino_favorito": -32.88718,
+    "lon_destino_favorito": -68.84085
   },
   "FABIAN TEGERO": {
     "nombre": "FABIAN TEGERO - Activo (134 viajes)",
@@ -757,7 +794,8 @@
     "frecuencia_viernes": 30,
     "frecuencia_sabado": 9,
     "frecuencia_domingo": 9,
-    "destino_favorito": "13- MARIANO MORENO"
+    "lat_destino_favorito": -32.90279,
+    "lon_destino_favorito": -68.85315
   },
   "ALE STANELONI": {
     "nombre": "ALE STANELONI - Activo (133 viajes)",
@@ -777,7 +815,8 @@
     "frecuencia_viernes": 21,
     "frecuencia_sabado": 1,
     "frecuencia_domingo": 0,
-    "destino_favorito": "05- PLAZA INDEPENDENCIA"
+    "lat_destino_favorito": -32.88939,
+    "lon_destino_favorito": -68.84484
   },
   "DAVID BAZAN": {
     "nombre": "DAVID BAZAN - Activo (133 viajes)",
@@ -797,7 +836,8 @@
     "frecuencia_viernes": 20,
     "frecuencia_sabado": 17,
     "frecuencia_domingo": 19,
-    "destino_favorito": "31-PASEO MOSCONI"
+    "lat_destino_favorito": -32.8621688,
+    "lon_destino_favorito": -68.8327164
   },
   "MARTIN MAZZEO": {
     "nombre": "MARTIN MAZZEO - Activo (133 viajes)",
@@ -817,7 +857,8 @@
     "frecuencia_viernes": 41,
     "frecuencia_sabado": 6,
     "frecuencia_domingo": 4,
-    "destino_favorito": "21- PARQUE ALFONSIN"
+    "lat_destino_favorito": -32.92152,
+    "lon_destino_favorito": -68.85168
   },
   "CLARISA AVERBUJ": {
     "nombre": "CLARISA AVERBUJ - Activo (131 viajes)",
@@ -837,7 +878,8 @@
     "frecuencia_viernes": 21,
     "frecuencia_sabado": 18,
     "frecuencia_domingo": 19,
-    "destino_favorito": "22- PARQUE SAN VICENTE"
+    "lat_destino_favorito": -32.93178365730272,
+    "lon_destino_favorito": -68.8513809636956
   },
   "JUAN AMADEI": {
     "nombre": "JUAN AMADEI - Activo (130 viajes)",
@@ -857,7 +899,8 @@
     "frecuencia_viernes": 18,
     "frecuencia_sabado": 22,
     "frecuencia_domingo": 29,
-    "destino_favorito": "50- CLUB REGATAS"
+    "lat_destino_favorito": -32.894291,
+    "lon_destino_favorito": -68.867444
   },
   "PEDRO CORRO": {
     "nombre": "PEDRO CORRO - Activo (130 viajes)",
@@ -877,7 +920,8 @@
     "frecuencia_viernes": 9,
     "frecuencia_sabado": 2,
     "frecuencia_domingo": 3,
-    "destino_favorito": "23_PUENTE CICLOVÍA"
+    "lat_destino_favorito": -32.94002,
+    "lon_destino_favorito": -68.85025
   },
   "FEDERICO AMAYA": {
     "nombre": "FEDERICO AMAYA - Activo (128 viajes)",
@@ -897,7 +941,8 @@
     "frecuencia_viernes": 14,
     "frecuencia_sabado": 16,
     "frecuencia_domingo": 27,
-    "destino_favorito": "07- KM 0"
+    "lat_destino_favorito": -32.890715045452176,
+    "lon_destino_favorito": -68.83887344047548
   },
   "LUCAS PAVEZ MORALES": {
     "nombre": "LUCAS PAVEZ MORALES - Activo (128 viajes)",
@@ -917,7 +962,8 @@
     "frecuencia_viernes": 15,
     "frecuencia_sabado": 20,
     "frecuencia_domingo": 15,
-    "destino_favorito": "56- ANTARTIDA ARGENTINA"
+    "lat_destino_favorito": -32.922204,
+    "lon_destino_favorito": -68.859877
   },
   "LUIS MORALES": {
     "nombre": "LUIS MORALES - Activo (128 viajes)",
@@ -937,7 +983,8 @@
     "frecuencia_viernes": 15,
     "frecuencia_sabado": 18,
     "frecuencia_domingo": 21,
-    "destino_favorito": "16- PELLEGRINI"
+    "lat_destino_favorito": -32.90844,
+    "lon_destino_favorito": -68.85218
   },
   "CARIM AZABE": {
     "nombre": "CARIM AZABE - Activo (127 viajes)",
@@ -957,7 +1004,8 @@
     "frecuencia_viernes": 22,
     "frecuencia_sabado": 13,
     "frecuencia_domingo": 9,
-    "destino_favorito": "30- SAN ANTONIO"
+    "lat_destino_favorito": -32.86998,
+    "lon_destino_favorito": -68.82757
   },
   "MARCELO ZANGHERI": {
     "nombre": "MARCELO ZANGHERI - Activo (125 viajes)",
@@ -977,7 +1025,8 @@
     "frecuencia_viernes": 33,
     "frecuencia_sabado": 1,
     "frecuencia_domingo": 1,
-    "destino_favorito": "82- SANTIAGO DEL ESTERO"
+    "lat_destino_favorito": -32.87068161934787,
+    "lon_destino_favorito": -68.83403607665177
   },
   "MARTIN ARANDA": {
     "nombre": "MARTIN ARANDA - Activo (124 viajes)",
@@ -997,6 +1046,7 @@
     "frecuencia_viernes": 17,
     "frecuencia_sabado": 25,
     "frecuencia_domingo": 30,
-    "destino_favorito": "32- BOULEVARD PERÚ"
+    "lat_destino_favorito": -32.8625917,
+    "lon_destino_favorito": -68.8419395
   }
 }
