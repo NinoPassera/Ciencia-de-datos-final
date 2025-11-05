@@ -298,45 +298,54 @@ def plots_page():
         
         top_destinos.columns = ['destino', 'cantidad_viajes']
         top_destinos['porcentaje'] = (top_destinos['cantidad_viajes'] / len(df_filtrado_dest) * 100).round(2)
-    
-    chart3 = (
-        alt.Chart(top_destinos)
-        .mark_bar()
-        .encode(
-            x=alt.X('cantidad_viajes:Q', 
-                   title='Cantidad de Viajes',
-                   axis=alt.Axis(format=',d')),
-            y=alt.Y('destino:N', 
-                   sort='-x', 
-                   title='Estación Destino'),
-            tooltip=[
-                alt.Tooltip('destino:N', title='Destino'),
-                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d'),
-                alt.Tooltip('porcentaje:Q', title='Porcentaje', format='.2f')
-            ],
-            color=alt.Color('cantidad_viajes:Q', 
-                          scale=alt.Scale(scheme='reds'), 
-                          legend=None)
+        
+        # Título dinámico según filtros
+        if len(estaciones_destino_seleccionadas) > 0:
+            titulo_grafico = f'Estaciones Destino Seleccionadas ({len(top_destinos)} estaciones)'
+        else:
+            titulo_grafico = 'Top 15 Estaciones Destino Más Frecuentes'
+        
+        chart3 = (
+            alt.Chart(top_destinos)
+            .mark_bar()
+            .encode(
+                x=alt.X('cantidad_viajes:Q', 
+                       title='Cantidad de Viajes',
+                       axis=alt.Axis(format=',d')),
+                y=alt.Y('destino:N', 
+                       sort='-x', 
+                       title='Estación Destino'),
+                tooltip=[
+                    alt.Tooltip('destino:N', title='Destino'),
+                    alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d'),
+                    alt.Tooltip('porcentaje:Q', title='Porcentaje', format='.2f')
+                ],
+                color=alt.Color('cantidad_viajes:Q', 
+                              scale=alt.Scale(scheme='reds'), 
+                              legend=None)
+            )
+            .properties(
+                width=700,
+                height=500,
+                title=titulo_grafico
+            )
         )
-        .properties(
-            width=700,
-            height=500,
-            title='Top 15 Estaciones Destino Más Frecuentes'
-        )
-    )
-    
-    st.altair_chart(chart3, width='stretch')
-    
-    # Estadísticas adicionales
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total de Viajes", f"{len(df):,}")
-    with col2:
-        st.metric("Destinos Únicos", f"{df['destino'].nunique()}")
-    with col3:
-        st.metric("Usuarios Únicos", f"{df.get('Usuario_key', pd.Series()).nunique() if 'Usuario_key' in df.columns else 'N/A'}")
-    with col4:
-        st.metric("Destino Más Frecuente", f"{top_destinos.iloc[0]['destino'][:20]}...")
+        
+        st.altair_chart(chart3, width='stretch')
+        
+        # Estadísticas adicionales
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Total de Viajes", f"{len(df_filtrado_dest):,}")
+        with col2:
+            st.metric("Destinos Únicos", f"{df_filtrado_dest['destino'].nunique()}")
+        with col3:
+            st.metric("Usuarios Únicos", f"{df_filtrado_dest.get('Usuario_key', pd.Series()).nunique() if 'Usuario_key' in df_filtrado_dest.columns else 'N/A'}")
+        with col4:
+            if len(top_destinos) > 0:
+                st.metric("Destino Más Frecuente", f"{top_destinos.iloc[0]['destino'][:20]}...")
+            else:
+                st.metric("Destino Más Frecuente", "N/A")
     
     st.markdown("---")
     
