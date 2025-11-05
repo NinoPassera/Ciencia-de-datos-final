@@ -53,6 +53,22 @@ def main():
             df['semanas_activas'].astype(str)
         )
     
+    # Filtrar usuarios que usen estaciones excluidas
+    print("\nFiltrando usuarios que usen estaciones excluidas...")
+    estaciones_excluidas = ["Hub-prueba", "TALLER BICITRAN"]
+    
+    # Verificar si existen columnas origen y destino
+    if 'origen' in df.columns and 'destino' in df.columns:
+        usuarios_con_estaciones_excluidas = df[
+            df['origen'].isin(estaciones_excluidas) | 
+            df['destino'].isin(estaciones_excluidas)
+        ]['Usuario_key'].unique()
+        cantidad_usuarios_eliminados = len(usuarios_con_estaciones_excluidas)
+        df = df[~df['Usuario_key'].isin(usuarios_con_estaciones_excluidas)]
+        print(f"[OK] Eliminados {cantidad_usuarios_eliminados:,} usuarios que usaron estaciones excluidas")
+    else:
+        print("[ADVERTENCIA] No se encontraron columnas 'origen' y 'destino' para filtrar usuarios")
+    
     # Agrupar por usuario y obtener métricas promedio/únicas
     print("\nProcesando usuarios únicos...")
     
