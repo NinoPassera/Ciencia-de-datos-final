@@ -199,10 +199,105 @@ def plots_page():
     lo que ayuda a entender los patrones de movilidad y demanda en diferentes zonas.
     """)
     
-    # Top 15 destinos
-    top_destinos = df['destino'].value_counts().head(15).reset_index()
-    top_destinos.columns = ['destino', 'cantidad_viajes']
-    top_destinos['porcentaje'] = (top_destinos['cantidad_viajes'] / len(df) * 100).round(2)
+    # Filtros temporales (mes y temporada)
+    col_filtro_temp1, col_filtro_temp2 = st.columns(2)
+    
+    with col_filtro_temp1:
+        # Mapeo de meses a nombres
+        meses_nombres_dest = {
+            1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+            5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+            9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+        }
+        
+        meses_disponibles_dest = sorted(df['mes'].unique())
+        opciones_meses_dest = ['Todos los meses'] + [meses_nombres_dest[m] for m in meses_disponibles_dest]
+        
+        mes_seleccionado_dest = st.selectbox(
+            "📅 Filtrar por Mes",
+            options=opciones_meses_dest,
+            index=0,
+            help="Selecciona un mes específico o 'Todos los meses' para ver todos los datos",
+            key="mes_selector_destinos"
+        )
+    
+    with col_filtro_temp2:
+        # Mapeo de temporadas (hemisferio sur)
+        temporadas_dest = {
+            'Todas las temporadas': None,
+            'Verano (Dic-Ene-Feb)': [12, 1, 2],
+            'Otoño (Mar-Abr-May)': [3, 4, 5],
+            'Invierno (Jun-Jul-Ago)': [6, 7, 8],
+            'Primavera (Sep-Oct-Nov)': [9, 10, 11]
+        }
+        
+        temporada_seleccionada_dest = st.selectbox(
+            "🌤️ Filtrar por Temporada",
+            options=list(temporadas_dest.keys()),
+            index=0,
+            help="Selecciona una temporada del año para filtrar los datos",
+            key="temporada_selector_destinos"
+        )
+    
+    # Filtro por estaciones destino (opcional)
+    todas_estaciones_destino = sorted(df['destino'].unique())
+    top_destinos_default = df['destino'].value_counts().head(15).index.tolist()
+    
+    estaciones_destino_seleccionadas = st.multiselect(
+        "🎯 Filtrar por Estaciones Destino (Opcional)",
+        options=todas_estaciones_destino,
+        default=[],
+        help="Selecciona estaciones destino específicas. Si no seleccionas ninguna, se mostrarán todas las estaciones.",
+        key="estaciones_destino_selector"
+    )
+    
+    # Aplicar filtros temporales
+    df_filtrado_dest = df.copy()
+    
+    # Filtro por mes
+    filtro_mes_aplicado_dest = False
+    if mes_seleccionado_dest != 'Todos los meses':
+        mes_numero_dest = [k for k, v in meses_nombres_dest.items() if v == mes_seleccionado_dest][0]
+        df_filtrado_dest = df_filtrado_dest[df_filtrado_dest['mes'] == mes_numero_dest]
+        filtro_mes_aplicado_dest = True
+    
+    # Filtro por temporada
+    filtro_temporada_aplicado_dest = False
+    if temporada_seleccionada_dest != 'Todas las temporadas':
+        meses_temporada_dest = temporadas_dest[temporada_seleccionada_dest]
+        if filtro_mes_aplicado_dest:
+            if mes_numero_dest in meses_temporada_dest:
+                filtro_temporada_aplicado_dest = True
+            else:
+                df_filtrado_dest = df_filtrado_dest[df_filtrado_dest['mes'].isin([])]
+                filtro_temporada_aplicado_dest = True
+        else:
+            df_filtrado_dest = df_filtrado_dest[df_filtrado_dest['mes'].isin(meses_temporada_dest)]
+            filtro_temporada_aplicado_dest = True
+    
+    # Filtro por estaciones destino
+    if len(estaciones_destino_seleccionadas) > 0:
+        df_filtrado_dest = df_filtrado_dest[df_filtrado_dest['destino'].isin(estaciones_destino_seleccionadas)]
+    
+    # Mostrar resumen de filtros aplicados
+    if len(df_filtrado_dest) < len(df):
+        st.info(f"📊 Mostrando {len(df_filtrado_dest):,} viajes de {len(df):,} totales (filtros aplicados)")
+    
+    # Validar que hay datos después de filtrar
+    if len(df_filtrado_dest) == 0:
+        st.warning("⚠️ No hay datos disponibles para los filtros seleccionados. Por favor, ajusta los filtros.")
+        st.markdown("---")
+    else:
+        # Top destinos (mostrar top 15 o todas las seleccionadas)
+        if len(estaciones_destino_seleccionadas) > 0:
+            # Si hay estaciones seleccionadas, mostrar solo esas
+            top_destinos = df_filtrado_dest['destino'].value_counts().reset_index()
+        else:
+            # Si no hay selección, mostrar top 15
+            top_destinos = df_filtrado_dest['destino'].value_counts().head(15).reset_index()
+        
+        top_destinos.columns = ['destino', 'cantidad_viajes']
+        top_destinos['porcentaje'] = (top_destinos['cantidad_viajes'] / len(df_filtrado_dest) * 100).round(2)
     
     chart3 = (
         alt.Chart(top_destinos)
@@ -210,7 +305,7 @@ def plots_page():
         .encode(
             x=alt.X('cantidad_viajes:Q', 
                    title='Cantidad de Viajes',
-                   axis=alt.Axis(format=',')),
+                   axis=alt.Axis(format=',d')),
             y=alt.Y('destino:N', 
                    sort='-x', 
                    title='Estación Destino'),
