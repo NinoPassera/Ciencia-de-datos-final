@@ -239,18 +239,6 @@ def plots_page():
             key="temporada_selector_destinos"
         )
     
-    # Filtro por estaciones destino (opcional)
-    todas_estaciones_destino = sorted(df['destino'].unique())
-    top_destinos_default = df['destino'].value_counts().head(15).index.tolist()
-    
-    estaciones_destino_seleccionadas = st.multiselect(
-        "🎯 Filtrar por Estaciones Destino (Opcional)",
-        options=todas_estaciones_destino,
-        default=[],
-        help="Selecciona estaciones destino específicas. Si no seleccionas ninguna, se mostrarán todas las estaciones.",
-        key="estaciones_destino_selector"
-    )
-    
     # Aplicar filtros temporales
     df_filtrado_dest = df.copy()
     
@@ -275,10 +263,6 @@ def plots_page():
             df_filtrado_dest = df_filtrado_dest[df_filtrado_dest['mes'].isin(meses_temporada_dest)]
             filtro_temporada_aplicado_dest = True
     
-    # Filtro por estaciones destino
-    if len(estaciones_destino_seleccionadas) > 0:
-        df_filtrado_dest = df_filtrado_dest[df_filtrado_dest['destino'].isin(estaciones_destino_seleccionadas)]
-    
     # Mostrar resumen de filtros aplicados
     if len(df_filtrado_dest) < len(df):
         st.info(f"📊 Mostrando {len(df_filtrado_dest):,} viajes de {len(df):,} totales (filtros aplicados)")
@@ -288,22 +272,13 @@ def plots_page():
         st.warning("⚠️ No hay datos disponibles para los filtros seleccionados. Por favor, ajusta los filtros.")
         st.markdown("---")
     else:
-        # Top destinos (mostrar top 15 o todas las seleccionadas)
-        if len(estaciones_destino_seleccionadas) > 0:
-            # Si hay estaciones seleccionadas, mostrar solo esas
-            top_destinos = df_filtrado_dest['destino'].value_counts().reset_index()
-        else:
-            # Si no hay selección, mostrar top 15
-            top_destinos = df_filtrado_dest['destino'].value_counts().head(15).reset_index()
+        # Top destinos (mostrar top 15)
+        top_destinos = df_filtrado_dest['destino'].value_counts().head(15).reset_index()
         
         top_destinos.columns = ['destino', 'cantidad_viajes']
         top_destinos['porcentaje'] = (top_destinos['cantidad_viajes'] / len(df_filtrado_dest) * 100).round(2)
         
-        # Título dinámico según filtros
-        if len(estaciones_destino_seleccionadas) > 0:
-            titulo_grafico = f'Estaciones Destino Seleccionadas ({len(top_destinos)} estaciones)'
-        else:
-            titulo_grafico = 'Top 15 Estaciones Destino Más Frecuentes'
+        titulo_grafico = 'Top 15 Estaciones Destino Más Frecuentes'
         
         chart3 = (
             alt.Chart(top_destinos)
