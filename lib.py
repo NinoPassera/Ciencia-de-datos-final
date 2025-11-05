@@ -309,6 +309,29 @@ def load_stations():
     # Si no se encuentra, retornar diccionario vacío
     return {}
 
+def load_usuarios():
+    """Carga los usuarios con sus métricas desde JSON"""
+    import json
+    
+    json_paths = [
+        "static/usuarios.json",
+        "usuarios.json",
+        "../prediccion/usuarios.json"
+    ]
+    
+    # Intentar cargar desde JSON
+    for json_path in json_paths:
+        try:
+            if os.path.exists(json_path):
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    usuarios_dict = json.load(f)
+                    return usuarios_dict
+        except Exception as e:
+            continue
+    
+    # Si no se encuentra, retornar diccionario vacío
+    return {}
+
 def load_model():
     """Carga el modelo Random Forest entrenado (con destino favorito)"""
     # Intentar diferentes rutas posibles (priorizar modelo con destino favorito en static/)

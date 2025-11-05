@@ -7,7 +7,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import altair as alt
-from lib import load_model, load_preprocessor, process_input, load_stations
+from lib import load_model, load_preprocessor, process_input, load_stations, load_usuarios
 
 def model_page():
     st.title("🤖 Modelo de Predicción")
@@ -210,7 +210,78 @@ def model_page():
         
         st.markdown("---")
         st.markdown("### 👤 Datos del Usuario (Opcionales)")
-        st.markdown("*Si no conoces estos datos, déjalos en los valores por defecto*")
+        st.markdown("*Si no conoces estos datos, déjalos en los valores por defecto o selecciona un usuario*")
+        
+        # Cargar usuarios
+        usuarios = load_usuarios()
+        
+        # Inicializar session_state para usuario seleccionado
+        if 'usuario_seleccionado' not in st.session_state:
+            st.session_state.usuario_seleccionado = None
+        
+        # Selector de usuario
+        if usuarios:
+            opciones_usuarios = ["-- Seleccionar usuario --"] + list(usuarios.keys())
+            nombres_descriptivos = ["-- Seleccionar usuario --"] + [
+                usuarios[key]['nombre'] for key in usuarios.keys()
+            ]
+            
+            # Crear diccionario para mapear nombres descriptivos a keys
+            usuario_key_map = {}
+            for i, key in enumerate(usuarios.keys(), 1):
+                usuario_key_map[nombres_descriptivos[i]] = key
+            
+            # Selectbox con nombres descriptivos
+            usuario_seleccionado_nombre = st.selectbox(
+                "👤 Seleccionar Usuario (Opcional)",
+                options=nombres_descriptivos,
+                index=0,
+                help="Selecciona un usuario para autocompletar sus datos",
+                key="selector_usuario"
+            )
+            
+            # Si se selecciona un usuario, actualizar session_state
+            if usuario_seleccionado_nombre and usuario_seleccionado_nombre != "-- Seleccionar usuario --":
+                st.session_state.usuario_seleccionado = usuario_key_map[usuario_seleccionado_nombre]
+            else:
+                st.session_state.usuario_seleccionado = None
+        
+        # Obtener datos del usuario seleccionado o valores por defecto
+        if st.session_state.usuario_seleccionado and st.session_state.usuario_seleccionado in usuarios:
+            usuario_data = usuarios[st.session_state.usuario_seleccionado]
+            default_viajes_totales = usuario_data['viajes_totales']
+            default_semanas_activas = usuario_data['semanas_activas']
+            default_duracion_promedio_min = usuario_data['duracion_promedio_min']
+            default_distancia_promedio_usuario = usuario_data['distancia_promedio_usuario']
+            default_variedad_destinos = usuario_data['variedad_destinos']
+            default_variedad_origenes = usuario_data['variedad_origenes']
+            default_consistencia_horaria = usuario_data['consistencia_horaria']
+            default_dia_favorito = usuario_data['dia_favorito']
+            default_destino_favorito = usuario_data.get('destino_favorito', None)
+            default_frecuencia_lunes = usuario_data['frecuencia_lunes']
+            default_frecuencia_martes = usuario_data['frecuencia_martes']
+            default_frecuencia_miercoles = usuario_data['frecuencia_miercoles']
+            default_frecuencia_jueves = usuario_data['frecuencia_jueves']
+            default_frecuencia_viernes = usuario_data['frecuencia_viernes']
+            default_frecuencia_sabado = usuario_data['frecuencia_sabado']
+            default_frecuencia_domingo = usuario_data['frecuencia_domingo']
+        else:
+            default_viajes_totales = 25
+            default_semanas_activas = 10
+            default_duracion_promedio_min = 20.0
+            default_distancia_promedio_usuario = 0.025
+            default_variedad_destinos = 8
+            default_variedad_origenes = 5
+            default_consistencia_horaria = 3.0
+            default_dia_favorito = 0
+            default_destino_favorito = None
+            default_frecuencia_lunes = 5
+            default_frecuencia_martes = 4
+            default_frecuencia_miercoles = 4
+            default_frecuencia_jueves = 4
+            default_frecuencia_viernes = 5
+            default_frecuencia_sabado = 3
+            default_frecuencia_domingo = 2
         
         col3, col4 = st.columns(2)
         
@@ -218,26 +289,26 @@ def model_page():
             viajes_totales = st.number_input(
                 "Viajes Totales del Usuario",
                 min_value=0,
-                value=25,
+                value=default_viajes_totales,
                 help="Número total de viajes que ha hecho el usuario"
             )
             semanas_activas = st.number_input(
                 "Semanas Activas",
                 min_value=1,
-                value=10,
+                value=default_semanas_activas,
                 help="Número de semanas diferentes en que el usuario ha usado el servicio"
             )
             duracion_promedio_min = st.number_input(
                 "Duración Promedio (minutos)",
                 min_value=0.0,
-                value=20.0,
+                value=default_duracion_promedio_min,
                 step=0.1,
                 help="Duración promedio de viajes del usuario en minutos"
             )
             distancia_promedio_usuario = st.number_input(
                 "Distancia Promedio del Usuario",
                 min_value=0.0,
-                value=0.025,
+                value=default_distancia_promedio_usuario,
                 step=0.001,
                 format="%.5f",
                 help="Distancia promedio que recorre el usuario en sus viajes"
@@ -247,25 +318,26 @@ def model_page():
             variedad_destinos = st.number_input(
                 "Variedad de Destinos",
                 min_value=1,
-                value=8,
+                value=default_variedad_destinos,
                 help="Número de destinos únicos que visita el usuario"
             )
             variedad_origenes = st.number_input(
                 "Variedad de Orígenes",
                 min_value=1,
-                value=5,
+                value=default_variedad_origenes,
                 help="Número de orígenes únicos que usa el usuario"
             )
             consistencia_horaria = st.number_input(
                 "Consistencia Horaria",
                 min_value=0.0,
-                value=3.0,
+                value=default_consistencia_horaria,
                 step=0.1,
                 help="Desviación estándar de horas de viaje (menor = más consistente)"
             )
             dia_favorito = st.selectbox(
                 "Día Favorito",
                 options=[0, 1, 2, 3, 4, 5, 6],
+                index=default_dia_favorito,
                 format_func=lambda x: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][x],
                 help="Día de la semana favorito del usuario"
             )
@@ -273,10 +345,15 @@ def model_page():
             # Selector de destino favorito
             if estaciones:
                 nombres_estaciones = sorted(list(estaciones.keys()))
+                # Determinar índice inicial si hay destino favorito
+                index_destino = 0
+                if default_destino_favorito and default_destino_favorito in nombres_estaciones:
+                    index_destino = nombres_estaciones.index(default_destino_favorito) + 1
+                
                 destino_favorito_nombre = st.selectbox(
                     "Destino Favorito del Usuario",
                     options=[""] + nombres_estaciones,
-                    index=0,
+                    index=index_destino,
                     help="Destino más frecuente del usuario (opcional, mejora la predicción)",
                     key="destino_favorito_selector"
                 )
@@ -289,17 +366,17 @@ def model_page():
         col5, col6, col7 = st.columns(3)
         
         with col5:
-            frecuencia_lunes = st.number_input("Viajes Lunes", min_value=0, value=5)
-            frecuencia_martes = st.number_input("Viajes Martes", min_value=0, value=4)
-            frecuencia_miercoles = st.number_input("Viajes Miércoles", min_value=0, value=4)
+            frecuencia_lunes = st.number_input("Viajes Lunes", min_value=0, value=default_frecuencia_lunes)
+            frecuencia_martes = st.number_input("Viajes Martes", min_value=0, value=default_frecuencia_martes)
+            frecuencia_miercoles = st.number_input("Viajes Miércoles", min_value=0, value=default_frecuencia_miercoles)
         
         with col6:
-            frecuencia_jueves = st.number_input("Viajes Jueves", min_value=0, value=4)
-            frecuencia_viernes = st.number_input("Viajes Viernes", min_value=0, value=5)
-            frecuencia_sabado = st.number_input("Viajes Sábado", min_value=0, value=3)
+            frecuencia_jueves = st.number_input("Viajes Jueves", min_value=0, value=default_frecuencia_jueves)
+            frecuencia_viernes = st.number_input("Viajes Viernes", min_value=0, value=default_frecuencia_viernes)
+            frecuencia_sabado = st.number_input("Viajes Sábado", min_value=0, value=default_frecuencia_sabado)
         
         with col7:
-            frecuencia_domingo = st.number_input("Viajes Domingo", min_value=0, value=2)
+            frecuencia_domingo = st.number_input("Viajes Domingo", min_value=0, value=default_frecuencia_domingo)
         
         # Botón de predicción
         submitted = st.form_submit_button("🔮 Predecir Destino", use_container_width=True)
