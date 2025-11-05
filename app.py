@@ -2,6 +2,7 @@ import streamlit as st
 from main import main_page
 from plots import plots_page
 from model import model_page
+from explicacion_modelo import explicacion_modelo_page
 
 # Configuración de la página
 st.set_page_config(
@@ -13,9 +14,10 @@ st.set_page_config(
 
 # Navegación multi-página
 main_page_obj = st.Page(main_page, title="Inicio", icon="🏠", default=True)
+explicacion_modelo_page_obj = st.Page(explicacion_modelo_page, title="Explicación del Modelo", icon="📚")
 plots_page_obj = st.Page(plots_page, title="Visualizaciones", icon="📊")
 model_page_obj = st.Page(model_page, title="Modelo", icon="🤖")
 
-pg = st.navigation([main_page_obj, plots_page_obj, model_page_obj])
+pg = st.navigation([main_page_obj, explicacion_modelo_page_obj, plots_page_obj, model_page_obj])
 pg.run()
 
