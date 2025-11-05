@@ -16,7 +16,7 @@ def main_page():
     en bicicleta basado en datos históricos de usuarios, características temporales, geográficas y patrones 
     de comportamiento.
     
-    El modelo utiliza **Random Forest** con **27 características** que incluyen:
+    El modelo utiliza **Random Forest** con **29 características** que incluyen:
     """)
     
     col1, col2, col3 = st.columns(3)
@@ -25,6 +25,7 @@ def main_page():
         st.markdown("""
         ### 🗺️ Características Geográficas
         - Coordenadas de origen (lat/lon)
+        - Coordenadas de destino favorito (lat/lon)
         - Zona geográfica
         - Capacidad de estación
         - Estaciones cercanas
@@ -53,24 +54,24 @@ def main_page():
     st.markdown("---")
     
     st.markdown("""
-    ## 🎯 Resultados del Modelo
+    ## 🎯 Resultados del Modelo (versión actual)
     
-    - **Accuracy**: 53.66% (mejora de +6.65% vs modelo original)
-    - **Validación cruzada**: 47.02% (+/- 2.58%)
-    - **Destinos únicos**: 89 estaciones
-    - **Registros de entrenamiento**: 150,064
+    - **Accuracy**: 60.64%
+    - **OOB score**: 60.84%
+    - **Destinos únicos (tras filtrado)**: 94
+    - **Registros de entrenamiento**: 120,677 (test: 30,170)
     """)
     
     st.markdown("---")
     
     st.markdown("""
-    ## 🔥 Características Más Importantes
+    ## 🔥 Características Más Importantes (estimación)
     
-    1. **Distancia promedio del usuario** (10.40%) - ⭐ La más predictiva!
-    2. **Mes del año** (6.62%)
-    3. **Hora de salida** (6.50%)
-    4. **Longitud de origen** (5.82%)
-    5. **Duración promedio** (5.82%)
+    1. **Longitud Destino Favorito** (~29.27%)
+    2. **Latitud Destino Favorito** (~28.22%)
+    3. **Distancia promedio del usuario** (~6.28%)
+    4. **Latitud de origen** (~4.98%)
+    5. **Longitud de origen** (~4.84%)
     """)
     
     st.markdown("---")
