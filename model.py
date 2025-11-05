@@ -176,6 +176,56 @@ def model_page():
     with col_temp_header:
         st.markdown("### ⏰ Datos Temporales")
     
+    # Cargar usuarios antes del form para el selector
+    usuarios = load_usuarios()
+    
+    # Inicializar session_state para usuario seleccionado
+    if 'usuario_seleccionado' not in st.session_state:
+        st.session_state.usuario_seleccionado = None
+    if 'usuario_data' not in st.session_state:
+        st.session_state.usuario_data = None
+    
+    # Selector de usuario (FUERA del form para que actualice inmediatamente)
+    if usuarios:
+        # Crear lista de opciones con nombres descriptivos
+        nombres_descriptivos = ["-- Seleccionar usuario --"] + [
+            usuarios[key]['nombre'] for key in usuarios.keys()
+        ]
+        
+        # Crear diccionario para mapear nombres descriptivos a keys
+        usuario_key_map = {}
+        for i, key in enumerate(usuarios.keys(), 1):
+            usuario_key_map[nombres_descriptivos[i]] = key
+        
+        # Obtener índice actual si hay usuario seleccionado
+        index_actual = 0
+        if st.session_state.usuario_seleccionado:
+            # Buscar el índice del usuario seleccionado
+            for i, nombre in enumerate(nombres_descriptivos):
+                if nombre != "-- Seleccionar usuario --" and usuario_key_map[nombre] == st.session_state.usuario_seleccionado:
+                    index_actual = i
+                    break
+        
+        # Selectbox con nombres descriptivos (FUERA del form)
+        usuario_seleccionado_nombre = st.selectbox(
+            "👤 Seleccionar Usuario (Opcional)",
+            options=nombres_descriptivos,
+            index=index_actual,
+            help="Selecciona un usuario para autocompletar sus datos",
+            key="selector_usuario"
+        )
+        
+        # Si se selecciona un usuario, actualizar session_state
+        if usuario_seleccionado_nombre and usuario_seleccionado_nombre != "-- Seleccionar usuario --":
+            usuario_key = usuario_key_map[usuario_seleccionado_nombre]
+            st.session_state.usuario_seleccionado = usuario_key
+            st.session_state.usuario_data = usuarios[usuario_key]
+        else:
+            st.session_state.usuario_seleccionado = None
+            st.session_state.usuario_data = None
+    
+    st.markdown("---")
+    
     # Formulario de entrada
     with st.form("form_prediccion"):
         col1, col2 = st.columns(2)
@@ -208,47 +258,12 @@ def model_page():
                 help="Mes del año (1-12)"
             )
         
-        st.markdown("---")
         st.markdown("### 👤 Datos del Usuario (Opcionales)")
         st.markdown("*Si no conoces estos datos, déjalos en los valores por defecto o selecciona un usuario*")
         
-        # Cargar usuarios
-        usuarios = load_usuarios()
-        
-        # Inicializar session_state para usuario seleccionado
-        if 'usuario_seleccionado' not in st.session_state:
-            st.session_state.usuario_seleccionado = None
-        
-        # Selector de usuario
-        if usuarios:
-            opciones_usuarios = ["-- Seleccionar usuario --"] + list(usuarios.keys())
-            nombres_descriptivos = ["-- Seleccionar usuario --"] + [
-                usuarios[key]['nombre'] for key in usuarios.keys()
-            ]
-            
-            # Crear diccionario para mapear nombres descriptivos a keys
-            usuario_key_map = {}
-            for i, key in enumerate(usuarios.keys(), 1):
-                usuario_key_map[nombres_descriptivos[i]] = key
-            
-            # Selectbox con nombres descriptivos
-            usuario_seleccionado_nombre = st.selectbox(
-                "👤 Seleccionar Usuario (Opcional)",
-                options=nombres_descriptivos,
-                index=0,
-                help="Selecciona un usuario para autocompletar sus datos",
-                key="selector_usuario"
-            )
-            
-            # Si se selecciona un usuario, actualizar session_state
-            if usuario_seleccionado_nombre and usuario_seleccionado_nombre != "-- Seleccionar usuario --":
-                st.session_state.usuario_seleccionado = usuario_key_map[usuario_seleccionado_nombre]
-            else:
-                st.session_state.usuario_seleccionado = None
-        
         # Obtener datos del usuario seleccionado o valores por defecto
-        if st.session_state.usuario_seleccionado and st.session_state.usuario_seleccionado in usuarios:
-            usuario_data = usuarios[st.session_state.usuario_seleccionado]
+        if st.session_state.usuario_data:
+            usuario_data = st.session_state.usuario_data
             default_viajes_totales = usuario_data['viajes_totales']
             default_semanas_activas = usuario_data['semanas_activas']
             default_duracion_promedio_min = usuario_data['duracion_promedio_min']
@@ -286,24 +301,30 @@ def model_page():
         col3, col4 = st.columns(2)
         
         with col3:
+            # Usar key único basado en usuario seleccionado para forzar actualización
+            usuario_key_suffix = st.session_state.usuario_seleccionado if st.session_state.usuario_seleccionado else "default"
+            
             viajes_totales = st.number_input(
                 "Viajes Totales del Usuario",
                 min_value=0,
                 value=default_viajes_totales,
-                help="Número total de viajes que ha hecho el usuario"
+                help="Número total de viajes que ha hecho el usuario",
+                key=f"viajes_totales_{usuario_key_suffix}"
             )
             semanas_activas = st.number_input(
                 "Semanas Activas",
                 min_value=1,
                 value=default_semanas_activas,
-                help="Número de semanas diferentes en que el usuario ha usado el servicio"
+                help="Número de semanas diferentes en que el usuario ha usado el servicio",
+                key=f"semanas_activas_{usuario_key_suffix}"
             )
             duracion_promedio_min = st.number_input(
                 "Duración Promedio (minutos)",
                 min_value=0.0,
                 value=default_duracion_promedio_min,
                 step=0.1,
-                help="Duración promedio de viajes del usuario en minutos"
+                help="Duración promedio de viajes del usuario en minutos",
+                key=f"duracion_promedio_{usuario_key_suffix}"
             )
             distancia_promedio_usuario = st.number_input(
                 "Distancia Promedio del Usuario",
@@ -311,7 +332,8 @@ def model_page():
                 value=default_distancia_promedio_usuario,
                 step=0.001,
                 format="%.5f",
-                help="Distancia promedio que recorre el usuario en sus viajes"
+                help="Distancia promedio que recorre el usuario en sus viajes",
+                key=f"distancia_promedio_{usuario_key_suffix}"
             )
         
         with col4:
@@ -319,27 +341,31 @@ def model_page():
                 "Variedad de Destinos",
                 min_value=1,
                 value=default_variedad_destinos,
-                help="Número de destinos únicos que visita el usuario"
+                help="Número de destinos únicos que visita el usuario",
+                key=f"variedad_destinos_{usuario_key_suffix}"
             )
             variedad_origenes = st.number_input(
                 "Variedad de Orígenes",
                 min_value=1,
                 value=default_variedad_origenes,
-                help="Número de orígenes únicos que usa el usuario"
+                help="Número de orígenes únicos que usa el usuario",
+                key=f"variedad_origenes_{usuario_key_suffix}"
             )
             consistencia_horaria = st.number_input(
                 "Consistencia Horaria",
                 min_value=0.0,
                 value=default_consistencia_horaria,
                 step=0.1,
-                help="Desviación estándar de horas de viaje (menor = más consistente)"
+                help="Desviación estándar de horas de viaje (menor = más consistente)",
+                key=f"consistencia_horaria_{usuario_key_suffix}"
             )
             dia_favorito = st.selectbox(
                 "Día Favorito",
                 options=[0, 1, 2, 3, 4, 5, 6],
                 index=default_dia_favorito,
                 format_func=lambda x: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'][x],
-                help="Día de la semana favorito del usuario"
+                help="Día de la semana favorito del usuario",
+                key=f"dia_favorito_{usuario_key_suffix}"
             )
             
             # Selector de destino favorito
@@ -355,7 +381,7 @@ def model_page():
                     options=[""] + nombres_estaciones,
                     index=index_destino,
                     help="Destino más frecuente del usuario (opcional, mejora la predicción)",
-                    key="destino_favorito_selector"
+                    key=f"destino_favorito_{usuario_key_suffix}"
                 )
                 destino_favorito = destino_favorito_nombre if destino_favorito_nombre else None
             else:
@@ -366,17 +392,17 @@ def model_page():
         col5, col6, col7 = st.columns(3)
         
         with col5:
-            frecuencia_lunes = st.number_input("Viajes Lunes", min_value=0, value=default_frecuencia_lunes)
-            frecuencia_martes = st.number_input("Viajes Martes", min_value=0, value=default_frecuencia_martes)
-            frecuencia_miercoles = st.number_input("Viajes Miércoles", min_value=0, value=default_frecuencia_miercoles)
+            frecuencia_lunes = st.number_input("Viajes Lunes", min_value=0, value=default_frecuencia_lunes, key=f"frecuencia_lunes_{usuario_key_suffix}")
+            frecuencia_martes = st.number_input("Viajes Martes", min_value=0, value=default_frecuencia_martes, key=f"frecuencia_martes_{usuario_key_suffix}")
+            frecuencia_miercoles = st.number_input("Viajes Miércoles", min_value=0, value=default_frecuencia_miercoles, key=f"frecuencia_miercoles_{usuario_key_suffix}")
         
         with col6:
-            frecuencia_jueves = st.number_input("Viajes Jueves", min_value=0, value=default_frecuencia_jueves)
-            frecuencia_viernes = st.number_input("Viajes Viernes", min_value=0, value=default_frecuencia_viernes)
-            frecuencia_sabado = st.number_input("Viajes Sábado", min_value=0, value=default_frecuencia_sabado)
+            frecuencia_jueves = st.number_input("Viajes Jueves", min_value=0, value=default_frecuencia_jueves, key=f"frecuencia_jueves_{usuario_key_suffix}")
+            frecuencia_viernes = st.number_input("Viajes Viernes", min_value=0, value=default_frecuencia_viernes, key=f"frecuencia_viernes_{usuario_key_suffix}")
+            frecuencia_sabado = st.number_input("Viajes Sábado", min_value=0, value=default_frecuencia_sabado, key=f"frecuencia_sabado_{usuario_key_suffix}")
         
         with col7:
-            frecuencia_domingo = st.number_input("Viajes Domingo", min_value=0, value=default_frecuencia_domingo)
+            frecuencia_domingo = st.number_input("Viajes Domingo", min_value=0, value=default_frecuencia_domingo, key=f"frecuencia_domingo_{usuario_key_suffix}")
         
         # Botón de predicción
         submitted = st.form_submit_button("🔮 Predecir Destino", use_container_width=True)
