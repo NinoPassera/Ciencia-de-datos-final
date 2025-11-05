@@ -121,9 +121,160 @@ def explicacion_modelo_page():
     """)
     
     if modelo_cargado and hasattr(modelo, 'feature_importances_'):
-        # Usar la función de lib.py para renderizar la importancia
+        # Crear gráfico con colores por categoría
         try:
-            render_feature_importance(modelo, top_n=29)
+            importance = modelo.feature_importances_
+            feature_names = modelo.feature_names_in_ if hasattr(modelo, 'feature_names_in_') else [f'feature_{i}' for i in range(len(importance))]
+            
+            # Mapeo de nombres de features a nombres descriptivos en español
+            nombres_descriptivos = {
+                'lat_destino_favorito': 'Latitud Destino Favorito',
+                'lon_destino_favorito': 'Longitud Destino Favorito',
+                'destino_favorito_encoded': 'Destino Favorito (Codificado)',
+                'origen_lat': 'Latitud Origen',
+                'origen_lon': 'Longitud Origen',
+                'hora_salida': 'Hora de Salida',
+                'dia_semana': 'Día de la Semana',
+                'mes': 'Mes',
+                'viajes_totales': 'Viajes Totales',
+                'semanas_activas': 'Semanas Activas',
+                'viajes_por_semana': 'Viajes por Semana',
+                'duracion_promedio_min': 'Duración Promedio (min)',
+                'periodo_dia_numerico': 'Período del Día',
+                'es_fin_semana': 'Es Fin de Semana',
+                'es_hora_pico': 'Es Hora Pico',
+                'zona_origen': 'Zona Origen',
+                'capacidad_origen': 'Capacidad Estación Origen',
+                'estaciones_cercanas_origen': 'Estaciones Cercanas Origen',
+                'variedad_destinos': 'Variedad Destinos',
+                'variedad_origenes': 'Variedad Orígenes',
+                'consistencia_horaria': 'Consistencia Horaria',
+                'distancia_promedio_usuario': 'Distancia Promedio Usuario',
+                'dia_favorito': 'Día Favorito',
+                'frecuencia_lunes': 'Frecuencia Lunes',
+                'frecuencia_martes': 'Frecuencia Martes',
+                'frecuencia_miercoles': 'Frecuencia Miércoles',
+                'frecuencia_jueves': 'Frecuencia Jueves',
+                'frecuencia_viernes': 'Frecuencia Viernes',
+                'frecuencia_sabado': 'Frecuencia Sábado',
+                'frecuencia_domingo': 'Frecuencia Domingo'
+            }
+            
+            # Mapeo de características a categorías
+            categorias = {
+                # Geográficas
+                'origen_lat': '🗺️ Geográficas',
+                'origen_lon': '🗺️ Geográficas',
+                'lat_destino_favorito': '🗺️ Geográficas',
+                'lon_destino_favorito': '🗺️ Geográficas',
+                'zona_origen': '🗺️ Geográficas',
+                'capacidad_origen': '🗺️ Geográficas',
+                'estaciones_cercanas_origen': '🗺️ Geográficas',
+                
+                # Temporales
+                'hora_salida': '⏰ Temporales',
+                'dia_semana': '⏰ Temporales',
+                'mes': '⏰ Temporales',
+                'periodo_dia_numerico': '⏰ Temporales',
+                'es_fin_semana': '⏰ Temporales',
+                'es_hora_pico': '⏰ Temporales',
+                
+                # Usuario
+                'viajes_totales': '👤 Usuario',
+                'semanas_activas': '👤 Usuario',
+                'viajes_por_semana': '👤 Usuario',
+                'duracion_promedio_min': '👤 Usuario',
+                'variedad_destinos': '👤 Usuario',
+                'variedad_origenes': '👤 Usuario',
+                'consistencia_horaria': '👤 Usuario',
+                'distancia_promedio_usuario': '👤 Usuario',
+                'dia_favorito': '👤 Usuario',
+                'frecuencia_lunes': '👤 Usuario',
+                'frecuencia_martes': '👤 Usuario',
+                'frecuencia_miercoles': '👤 Usuario',
+                'frecuencia_jueves': '👤 Usuario',
+                'frecuencia_viernes': '👤 Usuario',
+                'frecuencia_sabado': '👤 Usuario',
+                'frecuencia_domingo': '👤 Usuario',
+                'destino_favorito_encoded': '🗺️ Geográficas'  # Fallback
+            }
+            
+            # Aplicar nombres descriptivos y categorías
+            feature_names_descriptivos = [nombres_descriptivos.get(name, name) for name in feature_names]
+            feature_categorias = [categorias.get(name, 'Otros') for name in feature_names]
+            
+            # Crear DataFrame
+            imp_df = pd.DataFrame({
+                'feature': feature_names_descriptivos,
+                'importance': importance,
+                'categoria': feature_categorias
+            }).sort_values('importance', ascending=False).head(29)
+            
+            # Crear gráfico con colores por categoría
+            chart = (
+                alt.Chart(imp_df)
+                .mark_bar()
+                .encode(
+                    x=alt.X('importance:Q', 
+                           title='Importancia (Gini)', 
+                           axis=alt.Axis(format='.4f')),
+                    y=alt.Y('feature:N', 
+                           sort='-x', 
+                           title='Característica',
+                           axis=alt.Axis(labelLimit=1000)),
+                    tooltip=[
+                        alt.Tooltip('feature:N', title='Característica'),
+                        alt.Tooltip('categoria:N', title='Categoría'),
+                        alt.Tooltip('importance:Q', title='Importancia', format='.4f')
+                    ],
+                    color=alt.Color('categoria:N',
+                                   scale=alt.Scale(
+                                       domain=['🗺️ Geográficas', '⏰ Temporales', '👤 Usuario'],
+                                       range=['#1f77b4', '#ff7f0e', '#2ca02c']  # Azul, Naranja, Verde
+                                   ),
+                                   legend=alt.Legend(
+                                       title='Categoría',
+                                       orient='bottom',
+                                       titleFontSize=12,
+                                       labelFontSize=11
+                                   ))
+                )
+                .properties(
+                    width=700,
+                    height=800,
+                    title='Importancia de las 29 Características del Modelo'
+                )
+            )
+            
+            st.altair_chart(chart, use_container_width=True)
+            
+            # Leyenda explicativa
+            st.markdown("""
+            **📊 Leyenda de Colores:**
+            
+            - 🔵 **Azul (🗺️ Geográficas)**: Características relacionadas con ubicación geográfica
+              - Coordenadas de origen (lat/lon)
+              - Coordenadas de destino favorito (lat/lon)
+              - Zona geográfica
+              - Capacidad de estación
+              - Estaciones cercanas
+            
+            - 🟠 **Naranja (⏰ Temporales)**: Características relacionadas con tiempo y momento
+              - Hora del día
+              - Día de la semana
+              - Mes del año
+              - Período del día
+              - Fin de semana / Hora pico
+            
+            - 🟢 **Verde (👤 Usuario)**: Características relacionadas con el comportamiento del usuario
+              - Historial de viajes
+              - Frecuencia semanal
+              - Duración promedio
+              - Distancia promedio
+              - Consistencia horaria
+              - Frecuencias por día de la semana
+            """)
+            
         except Exception as e:
             st.error(f"Error al generar gráfico de importancia: {e}")
             # Fallback: mostrar tabla
