@@ -141,10 +141,10 @@ def plots_page():
                    scale=alt.Scale(domain=[0, 23])),
             y=alt.Y('cantidad_viajes:Q', 
                    title='Cantidad de Viajes',
-                   axis=alt.Axis(format=',')),
+                   axis=alt.Axis(format=',d')),
             tooltip=[
                 alt.Tooltip('hora:Q', title='Hora', format='d'),
-                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',')
+                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d')
             ],
             color=alt.value('#4A90E2')
         )
@@ -172,10 +172,10 @@ def plots_page():
                    sort=dias_nombres),
             y=alt.Y('cantidad_viajes:Q', 
                    title='Cantidad de Viajes',
-                   axis=alt.Axis(format=',')),
+                   axis=alt.Axis(format=',d')),
             tooltip=[
                 alt.Tooltip('dia_nombre:N', title='Día'),
-                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',')
+                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d')
             ],
             color=alt.Color('cantidad_viajes:Q', 
                           scale=alt.Scale(scheme='viridis'), 
@@ -216,7 +216,7 @@ def plots_page():
                    title='Estación Destino'),
             tooltip=[
                 alt.Tooltip('destino:N', title='Destino'),
-                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=','),
+                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d'),
                 alt.Tooltip('porcentaje:Q', title='Porcentaje', format='.2f')
             ],
             color=alt.Color('cantidad_viajes:Q', 
