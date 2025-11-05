@@ -1,0 +1,38 @@
+Features del modelo con destino favorito:
+======================================================================
+
+Total features: 28
+
+Features originales:
+  - origen_lat
+  - origen_lon
+  - hora_salida
+  - dia_semana
+  - mes
+  - viajes_totales
+  - semanas_activas
+  - viajes_por_semana
+  - duracion_promedio_min
+
+Features mejoradas:
+  - periodo_dia_numerico
+  - es_fin_semana
+  - es_hora_pico
+  - zona_origen
+  - capacidad_origen
+  - estaciones_cercanas_origen
+  - variedad_destinos
+  - variedad_origenes
+  - consistencia_horaria
+  - distancia_promedio_usuario
+  - dia_favorito
+  - frecuencia_lunes
+  - frecuencia_martes
+  - frecuencia_miercoles
+  - frecuencia_jueves
+  - frecuencia_viernes
+  - frecuencia_sabado
+  - frecuencia_domingo
+
+Features nuevas:
+  - destino_favorito_encoded

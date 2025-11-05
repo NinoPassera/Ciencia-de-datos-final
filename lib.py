@@ -311,13 +311,11 @@ def load_stations():
 
 def load_model():
     """Carga el modelo Random Forest entrenado (con destino favorito)"""
-    # Intentar diferentes rutas posibles (priorizar modelo con destino favorito)
+    # Intentar diferentes rutas posibles (priorizar modelo con destino favorito en static/)
     model_paths = [
+        "static/modelo_con_destino_favorito.pkl",
         "modelos/modelo_con_destino_favorito.pkl",
-        "../modelos/modelo_con_destino_favorito.pkl",
-        "static/modelo_random_forest_final_tunado.pkl",
-        "modelo_random_forest_final_tunado.pkl",
-        "../prediccion/modelo_random_forest_final_tunado.pkl"
+        "../modelos/modelo_con_destino_favorito.pkl"
     ]
     
     for model_path in model_paths:
@@ -345,8 +343,9 @@ def load_model():
 
 def load_label_encoder():
     """Carga el LabelEncoder para destino favorito"""
-    # Intentar diferentes rutas posibles
+    # Intentar diferentes rutas posibles (priorizar static/)
     le_paths = [
+        "static/label_encoder_destino_favorito.pkl",
         "modelos/label_encoder_destino_favorito.pkl",
         "../modelos/label_encoder_destino_favorito.pkl"
     ]
@@ -401,27 +400,26 @@ def create_preprocessor(modelo=None):
     ]
     
     # Detectar si el modelo espera destino_favorito_encoded
-    # IMPORTANTE: Solo usar destino_favorito_encoded si el modelo la tiene en sus features
     usar_destino_favorito = False
-    label_encoder = None
-    
     if modelo is not None:
         # Verificar si el modelo tiene feature_names_in_ y si incluye destino_favorito_encoded
         if hasattr(modelo, 'feature_names_in_'):
             if 'destino_favorito_encoded' in modelo.feature_names_in_:
                 usar_destino_favorito = True
-                # Solo cargar LabelEncoder si el modelo realmente lo necesita
-                label_encoder = load_label_encoder()
+        # También verificar si hay LabelEncoder disponible (indicador de modelo con destino favorito)
+        label_encoder = load_label_encoder()
+        if label_encoder is not None:
+            usar_destino_favorito = True
     else:
-        # Si no hay modelo cargado, no podemos saber qué features necesita
-        # Por defecto, NO usar destino_favorito_encoded
-        usar_destino_favorito = False
-        label_encoder = None
+        # Si no hay modelo cargado, verificar si hay LabelEncoder disponible
+        label_encoder = load_label_encoder()
+        if label_encoder is not None:
+            usar_destino_favorito = True
     
     # Construir lista de features finales
     if usar_destino_favorito:
         features_finales = features_base + ['destino_favorito_encoded']
-        # label_encoder ya fue cargado arriba si se necesita
+        label_encoder = load_label_encoder()
     else:
         features_finales = features_base
         label_encoder = None

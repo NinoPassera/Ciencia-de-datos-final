@@ -269,13 +269,8 @@ def model_page():
                 help="Día de la semana favorito del usuario"
             )
             
-            # Selector de destino favorito (solo si el modelo lo necesita)
-            destino_favorito = None
-            modelo_usar_destino_favorito = False
-            if modelo is not None and hasattr(modelo, 'feature_names_in_'):
-                modelo_usar_destino_favorito = 'destino_favorito_encoded' in modelo.feature_names_in_
-            
-            if modelo_usar_destino_favorito and estaciones:
+            # Selector de destino favorito
+            if estaciones:
                 nombres_estaciones = sorted(list(estaciones.keys()))
                 destino_favorito_nombre = st.selectbox(
                     "Destino Favorito del Usuario",
@@ -285,6 +280,8 @@ def model_page():
                     key="destino_favorito_selector"
                 )
                 destino_favorito = destino_favorito_nombre if destino_favorito_nombre else None
+            else:
+                destino_favorito = None
         
         # Frecuencias semanales
         st.markdown("#### Frecuencias Semanales (Opcional)")
