@@ -401,26 +401,27 @@ def create_preprocessor(modelo=None):
     ]
     
     # Detectar si el modelo espera destino_favorito_encoded
+    # IMPORTANTE: Solo usar destino_favorito_encoded si el modelo la tiene en sus features
     usar_destino_favorito = False
+    label_encoder = None
+    
     if modelo is not None:
         # Verificar si el modelo tiene feature_names_in_ y si incluye destino_favorito_encoded
         if hasattr(modelo, 'feature_names_in_'):
             if 'destino_favorito_encoded' in modelo.feature_names_in_:
                 usar_destino_favorito = True
-        # También verificar si hay LabelEncoder disponible (indicador de modelo con destino favorito)
-        label_encoder = load_label_encoder()
-        if label_encoder is not None:
-            usar_destino_favorito = True
+                # Solo cargar LabelEncoder si el modelo realmente lo necesita
+                label_encoder = load_label_encoder()
     else:
-        # Si no hay modelo cargado, verificar si hay LabelEncoder disponible
-        label_encoder = load_label_encoder()
-        if label_encoder is not None:
-            usar_destino_favorito = True
+        # Si no hay modelo cargado, no podemos saber qué features necesita
+        # Por defecto, NO usar destino_favorito_encoded
+        usar_destino_favorito = False
+        label_encoder = None
     
     # Construir lista de features finales
     if usar_destino_favorito:
         features_finales = features_base + ['destino_favorito_encoded']
-        label_encoder = load_label_encoder()
+        # label_encoder ya fue cargado arriba si se necesita
     else:
         features_finales = features_base
         label_encoder = None
