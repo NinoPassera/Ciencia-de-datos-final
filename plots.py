@@ -49,8 +49,86 @@ def plots_page():
     y día de la semana, revelando patrones de comportamiento de los usuarios.
     """)
     
+    # Selectores de filtros temporales
+    col_filtro1, col_filtro2 = st.columns(2)
+    
+    with col_filtro1:
+        # Mapeo de meses a nombres
+        meses_nombres = {
+            1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+            5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+            9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+        }
+        
+        meses_disponibles = sorted(df['mes'].unique())
+        opciones_meses = ['Todos los meses'] + [meses_nombres[m] for m in meses_disponibles]
+        
+        mes_seleccionado = st.selectbox(
+            "📅 Filtrar por Mes",
+            options=opciones_meses,
+            index=0,
+            help="Selecciona un mes específico o 'Todos los meses' para ver todos los datos"
+        )
+    
+    with col_filtro2:
+        # Mapeo de temporadas (hemisferio sur)
+        temporadas = {
+            'Todas las temporadas': None,
+            'Verano (Dic-Ene-Feb)': [12, 1, 2],
+            'Otoño (Mar-Abr-May)': [3, 4, 5],
+            'Invierno (Jun-Jul-Ago)': [6, 7, 8],
+            'Primavera (Sep-Oct-Nov)': [9, 10, 11]
+        }
+        
+        temporada_seleccionada = st.selectbox(
+            "🌤️ Filtrar por Temporada",
+            options=list(temporadas.keys()),
+            index=0,
+            help="Selecciona una temporada del año para filtrar los datos"
+        )
+    
+    # Aplicar filtros
+    df_filtrado = df.copy()
+    
+    # Filtro por mes
+    filtro_mes_aplicado = False
+    if mes_seleccionado != 'Todos los meses':
+        mes_numero = [k for k, v in meses_nombres.items() if v == mes_seleccionado][0]
+        df_filtrado = df_filtrado[df_filtrado['mes'] == mes_numero]
+        filtro_mes_aplicado = True
+    
+    # Filtro por temporada
+    filtro_temporada_aplicado = False
+    if temporada_seleccionada != 'Todas las temporadas':
+        meses_temporada = temporadas[temporada_seleccionada]
+        if filtro_mes_aplicado:
+            # Si ya hay un mes seleccionado, verificar que esté en la temporada
+            if mes_numero in meses_temporada:
+                # El mes ya está filtrado, no necesitamos filtrar más
+                filtro_temporada_aplicado = True
+            else:
+                # El mes seleccionado no está en la temporada, no hay datos
+                df_filtrado = df_filtrado[df_filtrado['mes'].isin([])]  # DataFrame vacío
+                filtro_temporada_aplicado = True
+        else:
+            # Solo filtrar por temporada
+            df_filtrado = df_filtrado[df_filtrado['mes'].isin(meses_temporada)]
+            filtro_temporada_aplicado = True
+    
+    # Mostrar resumen de filtros aplicados
+    if len(df_filtrado) < len(df):
+        st.info(f"📊 Mostrando {len(df_filtrado):,} viajes de {len(df):,} totales (filtros aplicados)")
+    
+    # Validar que hay datos después de filtrar
+    if len(df_filtrado) == 0:
+        st.warning("⚠️ No hay datos disponibles para los filtros seleccionados. Por favor, ajusta los filtros.")
+        st.markdown("---")
+        return
+    
+    st.markdown("---")
+    
     # Crear visualización de distribución por hora
-    hora_counts = df['hora_salida'].value_counts().sort_index().reset_index()
+    hora_counts = df_filtrado['hora_salida'].value_counts().sort_index().reset_index()
     hora_counts.columns = ['hora', 'cantidad_viajes']
     
     chart2a = (
@@ -81,7 +159,7 @@ def plots_page():
     
     # Crear visualización de distribución por día de semana
     dias_nombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-    dia_counts = df['dia_semana'].value_counts().sort_index().reset_index()
+    dia_counts = df_filtrado['dia_semana'].value_counts().sort_index().reset_index()
     dia_counts.columns = ['dia_semana', 'cantidad_viajes']
     dia_counts['dia_nombre'] = dia_counts['dia_semana'].map(lambda x: dias_nombres[x] if x < 7 else 'Otro')
     
