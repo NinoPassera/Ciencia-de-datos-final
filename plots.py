@@ -324,8 +324,269 @@ def plots_page():
     
     st.markdown("---")
     
-    # Visualización 3: Matriz Origen-Destino (Heatmap)
-    st.markdown("## 3. Matriz de Probabilidad Origen-Destino")
+    # Visualización 3: Análisis Geográfico Interactivo
+    st.markdown("## 3. Análisis Geográfico")
+    st.markdown("""
+    Visualizaciones geográficas del sistema de bicicletas compartidas. Selecciona el tipo de análisis 
+    que quieres visualizar para explorar diferentes aspectos de la distribución y flujo de viajes.
+    """)
+    
+    # Selector de tipo de visualización geográfica
+    tipo_visualizacion = st.selectbox(
+        "🗺️ Seleccionar Tipo de Análisis Geográfico",
+        options=[
+            "Mapa de Calor de Estaciones",
+            "Mapa de Flujos entre Estaciones (Sankey)",
+            "Distribución Geográfica Origen-Destino"
+        ],
+        index=0,
+        help="Selecciona el tipo de visualización geográfica que quieres ver",
+        key="tipo_geo_selector"
+    )
+    
+    if tipo_visualizacion == "Mapa de Calor de Estaciones":
+        st.markdown("### 🔥 Mapa de Calor de Estaciones por Frecuencia de Uso")
+        st.markdown("""
+        Este gráfico muestra la frecuencia de uso de cada estación. Las estaciones más oscuras 
+        indican mayor cantidad de viajes (tanto como origen como destino).
+        """)
+        
+        # Calcular frecuencia de uso por estación (origen + destino)
+        if 'origen' in df.columns and 'destino' in df.columns:
+            # Contar apariciones como origen
+            frecuencia_origen = df['origen'].value_counts().reset_index()
+            frecuencia_origen.columns = ['estacion', 'frecuencia_origen']
+            
+            # Contar apariciones como destino
+            frecuencia_destino = df['destino'].value_counts().reset_index()
+            frecuencia_destino.columns = ['estacion', 'frecuencia_destino']
+            
+            # Combinar y sumar
+            frecuencia_total = frecuencia_origen.merge(
+                frecuencia_destino, 
+                on='estacion', 
+                how='outer'
+            ).fillna(0)
+            frecuencia_total['frecuencia_total'] = (
+                frecuencia_total['frecuencia_origen'] + 
+                frecuencia_total['frecuencia_destino']
+            )
+            
+            # Obtener coordenadas de las estaciones (si están en el CSV)
+            if 'origen_lat' in df.columns and 'origen_lon' in df.columns:
+                # Obtener coordenadas de origen
+                coords_origen = df.groupby('origen').agg({
+                    'origen_lat': 'first',
+                    'origen_lon': 'first'
+                }).reset_index()
+                coords_origen.columns = ['estacion', 'lat', 'lon']
+                
+                # Obtener coordenadas de destino desde estaciones.json
+                from lib import load_stations
+                estaciones_dict = load_stations()
+                
+                coords_destino_list = []
+                for estacion in frecuencia_total['estacion'].unique():
+                    if estacion in estaciones_dict:
+                        coords_destino_list.append({
+                            'estacion': estacion,
+                            'lat': estaciones_dict[estacion]['lat'],
+                            'lon': estaciones_dict[estacion]['lon']
+                        })
+                
+                if coords_destino_list:
+                    coords_destino = pd.DataFrame(coords_destino_list)
+                    # Combinar coordenadas
+                    coords = pd.concat([coords_origen, coords_destino]).drop_duplicates('estacion')
+                else:
+                    coords = coords_origen
+                
+                # Merge con frecuencia
+                frecuencia_con_coords = frecuencia_total.merge(
+                    coords, 
+                    on='estacion', 
+                    how='left'
+                ).dropna(subset=['lat', 'lon'])
+                
+                # Crear gráfico de mapa de calor
+                chart_heatmap = (
+                    alt.Chart(frecuencia_con_coords)
+                    .mark_circle(size=100)
+                    .encode(
+                        longitude='lon:Q',
+                        latitude='lat:Q',
+                        size=alt.Size('frecuencia_total:Q',
+                                     scale=alt.Scale(range=[50, 500]),
+                                     title='Frecuencia de Uso'),
+                        color=alt.Color('frecuencia_total:Q',
+                                       scale=alt.Scale(scheme='reds'),
+                                       title='Frecuencia'),
+                        tooltip=[
+                            alt.Tooltip('estacion:N', title='Estación'),
+                            alt.Tooltip('frecuencia_total:Q', title='Frecuencia Total', format=',d'),
+                            alt.Tooltip('frecuencia_origen:Q', title='Como Origen', format=',d'),
+                            alt.Tooltip('frecuencia_destino:Q', title='Como Destino', format=',d'),
+                            alt.Tooltip('lat:Q', title='Latitud', format='.5f'),
+                            alt.Tooltip('lon:Q', title='Longitud', format='.5f')
+                        ]
+                    )
+                    .properties(
+                        width=700,
+                        height=500,
+                        title='Mapa de Calor de Estaciones por Frecuencia de Uso'
+                    )
+                )
+                
+                st.altair_chart(chart_heatmap, use_container_width=True)
+            else:
+                st.warning("⚠️ No se encontraron coordenadas en el dataset. Usando gráfico de barras alternativo.")
+                # Gráfico alternativo de barras
+                top_estaciones = frecuencia_total.sort_values('frecuencia_total', ascending=False).head(20)
+                chart_barras = (
+                    alt.Chart(top_estaciones)
+                    .mark_bar()
+                    .encode(
+                        x=alt.X('frecuencia_total:Q', title='Frecuencia Total', axis=alt.Axis(format=',d')),
+                        y=alt.Y('estacion:N', sort='-x', title='Estación'),
+                        color=alt.Color('frecuencia_total:Q', scale=alt.Scale(scheme='reds'), legend=None),
+                        tooltip=[
+                            alt.Tooltip('estacion:N', title='Estación'),
+                            alt.Tooltip('frecuencia_total:Q', title='Frecuencia Total', format=',d')
+                        ]
+                    )
+                    .properties(
+                        width=700,
+                        height=600,
+                        title='Top 20 Estaciones por Frecuencia de Uso'
+                    )
+                )
+                st.altair_chart(chart_barras, use_container_width=True)
+        else:
+            st.warning("⚠️ No se encontraron las columnas 'origen' y 'destino' necesarias para este gráfico.")
+    
+    elif tipo_visualizacion == "Mapa de Flujos entre Estaciones (Sankey)":
+        st.markdown("### 🌊 Mapa de Flujos entre Estaciones (Diagrama Sankey)")
+        st.markdown("""
+        Este diagrama Sankey muestra los flujos de viajes entre estaciones. El ancho de las conexiones 
+        representa la cantidad de viajes entre cada par de estaciones.
+        """)
+        
+        if 'origen' in df.columns and 'destino' in df.columns:
+            # Calcular flujos entre estaciones (top conexiones)
+            flujos = df.groupby(['origen', 'destino']).size().reset_index(name='cantidad')
+            flujos = flujos.sort_values('cantidad', ascending=False).head(30)  # Top 30 conexiones
+            
+            # Crear datos para Sankey (usando Altair con transformación)
+            # Altair no tiene Sankey nativo, así que usaremos un gráfico de barras apiladas o de red
+            # Para Sankey real necesitaríamos plotly, pero podemos hacer una visualización similar
+            
+            # Crear gráfico de barras horizontales mostrando flujos
+            flujos['ruta'] = flujos['origen'] + ' → ' + flujos['destino']
+            
+            chart_sankey = (
+                alt.Chart(flujos)
+                .mark_bar()
+                .encode(
+                    x=alt.X('cantidad:Q', title='Cantidad de Viajes', axis=alt.Axis(format=',d')),
+                    y=alt.Y('ruta:N', sort='-x', title='Ruta (Origen → Destino)'),
+                    color=alt.Color('cantidad:Q', scale=alt.Scale(scheme='blues'), legend=None),
+                    tooltip=[
+                        alt.Tooltip('ruta:N', title='Ruta'),
+                        alt.Tooltip('cantidad:Q', title='Viajes', format=',d')
+                    ]
+                )
+                .properties(
+                    width=700,
+                    height=800,
+                    title='Top 30 Flujos entre Estaciones'
+                )
+            )
+            
+            st.altair_chart(chart_sankey, use_container_width=True)
+            
+            # Información adicional
+            st.info("💡 Para un diagrama Sankey completo con Plotly, sería necesario instalar plotly. Esta visualización muestra los flujos más importantes.")
+        else:
+            st.warning("⚠️ No se encontraron las columnas 'origen' y 'destino' necesarias para este gráfico.")
+    
+    elif tipo_visualizacion == "Distribución Geográfica Origen-Destino":
+        st.markdown("### 📍 Distribución Geográfica de Orígenes y Destinos")
+        st.markdown("""
+        Este gráfico muestra la distribución geográfica de los puntos de origen y destino de los viajes.
+        Puedes ver la densidad de viajes en diferentes zonas de la ciudad.
+        """)
+        
+        if 'origen_lat' in df.columns and 'origen_lon' in df.columns:
+            # Crear datos para origen
+            origenes = df[['origen_lat', 'origen_lon']].copy()
+            origenes['tipo'] = 'Origen'
+            origenes.columns = ['lat', 'lon', 'tipo']
+            
+            # Obtener coordenadas de destino desde estaciones.json
+            from lib import load_stations
+            estaciones_dict = load_stations()
+            
+            # Crear datos para destino usando el nombre de la estación
+            if 'destino' in df.columns and estaciones_dict:
+                destinos_list = []
+                for _, row in df.iterrows():
+                    destino_nombre = row['destino']
+                    if destino_nombre in estaciones_dict:
+                        destinos_list.append({
+                            'lat': estaciones_dict[destino_nombre]['lat'],
+                            'lon': estaciones_dict[destino_nombre]['lon'],
+                            'tipo': 'Destino'
+                        })
+                
+                if destinos_list:
+                    destinos = pd.DataFrame(destinos_list)
+                    # Combinar
+                    puntos = pd.concat([origenes, destinos]).dropna()
+                else:
+                    puntos = origenes.dropna()
+            else:
+                puntos = origenes.dropna()
+            
+            # Crear scatter plot con densidad
+            chart_scatter = (
+                alt.Chart(puntos)
+                .mark_circle(opacity=0.3, size=20)
+                .encode(
+                    longitude='lon:Q',
+                    latitude='lat:Q',
+                    color=alt.Color('tipo:N', 
+                                   scale=alt.Scale(domain=['Origen', 'Destino'],
+                                                  range=['#1f77b4', '#ff7f0e']),
+                                   title='Tipo'),
+                    tooltip=[
+                        alt.Tooltip('lat:Q', title='Latitud', format='.5f'),
+                        alt.Tooltip('lon:Q', title='Longitud', format='.5f'),
+                        alt.Tooltip('tipo:N', title='Tipo')
+                    ]
+                )
+                .properties(
+                    width=700,
+                    height=500,
+                    title='Distribución Geográfica de Orígenes y Destinos'
+                )
+            )
+            
+            st.altair_chart(chart_scatter, use_container_width=True)
+            
+            # Estadísticas
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Puntos de Origen", f"{len(origenes):,}")
+            with col2:
+                if 'destino_lat' in df.columns:
+                    st.metric("Puntos de Destino", f"{len(destinos):,}")
+        else:
+            st.warning("⚠️ No se encontraron coordenadas geográficas en el dataset.")
+    
+    st.markdown("---")
+    
+    # Visualización 4: Matriz Origen-Destino (Heatmap)
+    st.markdown("## 4. Matriz de Probabilidad Origen-Destino")
     st.markdown("""
     Este heatmap muestra la probabilidad de que un viaje desde una estación origen termine en una estación destino.
     Los valores representan el porcentaje de viajes desde cada origen hacia cada destino.
