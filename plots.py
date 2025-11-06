@@ -10,6 +10,8 @@ import altair as alt
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
+import folium
+from streamlit_folium import st_folium
 # from lib import load_model  # No se usa directamente
 
 def plots_page():
@@ -389,45 +391,51 @@ def plots_page():
                     how='left'
                 ).dropna(subset=['lat', 'lon'])
                 
-                # Crear gráfico de mapa de calor con mapa base
-                chart_heatmap = (
-                    alt.Chart(frecuencia_con_coords)
-                    .mark_circle(size=100)
-                    .encode(
-                        longitude='lon:Q',
-                        latitude='lat:Q',
-                        size=alt.Size('frecuencia_total:Q',
-                                     scale=alt.Scale(range=[50, 500]),
-                                     title='Frecuencia de Uso'),
-                        color=alt.Color('frecuencia_total:Q',
-                                       scale=alt.Scale(scheme='reds'),
-                                       title='Frecuencia'),
-                        tooltip=[
-                            alt.Tooltip('estacion:N', title='Estación'),
-                            alt.Tooltip('frecuencia_total:Q', title='Frecuencia Total', format=',d'),
-                            alt.Tooltip('frecuencia_origen:Q', title='Como Origen', format=',d'),
-                            alt.Tooltip('frecuencia_destino:Q', title='Como Destino', format=',d'),
-                            alt.Tooltip('lat:Q', title='Latitud', format='.5f'),
-                            alt.Tooltip('lon:Q', title='Longitud', format='.5f')
-                        ]
-                    )
-                    .properties(
-                        width=700,
-                        height=500,
-                        title='Mapa de Calor de Estaciones por Frecuencia de Uso'
-                    )
-                    .configure_view(
-                        strokeWidth=0,
-                        fill='#f5f5f5'
-                    )
-                    .project(
-                        type='mercator',
-                        scale=8000,
-                        center=[-68.84, -32.89]  # Centro de Mendoza
-                    )
+                # Crear mapa base con Folium
+                # Centro de Mendoza: -32.89, -68.84
+                mapa = folium.Map(
+                    location=[-32.89, -68.84],
+                    zoom_start=13,
+                    tiles='OpenStreetMap'
                 )
                 
-                st.altair_chart(chart_heatmap, use_container_width=True)
+                # Normalizar frecuencia para el tamaño de los círculos y el color
+                max_frecuencia = frecuencia_con_coords['frecuencia_total'].max()
+                min_frecuencia = frecuencia_con_coords['frecuencia_total'].min()
+                
+                # Agregar marcadores circulares para cada estación
+                for _, row in frecuencia_con_coords.iterrows():
+                    # Calcular tamaño del círculo (entre 5 y 30 metros de radio)
+                    radio = 5 + (row['frecuencia_total'] / max_frecuencia) * 25
+                    
+                    # Calcular color (rojo más intenso = mayor frecuencia)
+                    intensidad = int((row['frecuencia_total'] / max_frecuencia) * 255)
+                    color_hex = f'#{intensidad:02x}0000'
+                    
+                    # Crear círculo
+                    folium.CircleMarker(
+                        location=[row['lat'], row['lon']],
+                        radius=radio,
+                        popup=folium.Popup(
+                            f"""
+                            <b>{row['estacion']}</b><br>
+                            Frecuencia Total: {row['frecuencia_total']:,.0f}<br>
+                            Como Origen: {row['frecuencia_origen']:,.0f}<br>
+                            Como Destino: {row['frecuencia_destino']:,.0f}<br>
+                            Lat: {row['lat']:.5f}, Lon: {row['lon']:.5f}
+                            """,
+                            max_width=300
+                        ),
+                        tooltip=f"{row['estacion']}: {row['frecuencia_total']:,.0f} viajes",
+                        color='darkred',
+                        fill=True,
+                        fillColor=color_hex,
+                        fillOpacity=0.6,
+                        weight=2
+                    ).add_to(mapa)
+                
+                # Mostrar mapa
+                st_folium(mapa, width=700, height=500, returned_objects=[])
             else:
                 st.warning("⚠️ No se encontraron coordenadas en el dataset. Usando gráfico de barras alternativo.")
                 # Gráfico alternativo de barras
