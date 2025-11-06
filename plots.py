@@ -47,8 +47,8 @@ def plots_page():
     # Visualización 1: Distribución Temporal de Viajes
     st.markdown("## 1. Distribución Temporal de Viajes")
     st.markdown("""
-    Análisis de patrones temporales en los viajes. Muestra la distribución de viajes por hora del día
-    y día de la semana, revelando patrones de comportamiento de los usuarios.
+    Análisis de patrones temporales en los viajes. Muestra la distribución de viajes por hora del día,
+    revelando patrones de comportamiento de los usuarios.
     """)
     
     # Selectores de filtros temporales
@@ -158,39 +158,6 @@ def plots_page():
     )
     
     st.altair_chart(chart2a, width='stretch')
-    
-    # Crear visualización de distribución por día de semana
-    dias_nombres = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-    dia_counts = df_filtrado['dia_semana'].value_counts().sort_index().reset_index()
-    dia_counts.columns = ['dia_semana', 'cantidad_viajes']
-    dia_counts['dia_nombre'] = dia_counts['dia_semana'].map(lambda x: dias_nombres[x] if x < 7 else 'Otro')
-    
-    chart2b = (
-        alt.Chart(dia_counts)
-        .mark_bar()
-        .encode(
-            x=alt.X('dia_nombre:N', 
-                   title='Día de la Semana',
-                   sort=dias_nombres),
-            y=alt.Y('cantidad_viajes:Q', 
-                   title='Cantidad de Viajes',
-                   axis=alt.Axis(format=',d')),
-            tooltip=[
-                alt.Tooltip('dia_nombre:N', title='Día'),
-                alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d')
-            ],
-            color=alt.Color('cantidad_viajes:Q', 
-                          scale=alt.Scale(scheme='viridis'), 
-                          legend=None)
-        )
-        .properties(
-            width=700,
-            height=300,
-            title='Distribución de Viajes por Día de la Semana'
-        )
-    )
-    
-    st.altair_chart(chart2b, width='stretch')
     
     st.markdown("---")
     
@@ -652,7 +619,7 @@ def plots_page():
     st.markdown("---")
     
     # Visualización 5: Matriz Origen-Destino (Heatmap)
-    st.markdown("## 4. Matriz de Probabilidad Origen-Destino")
+    st.markdown("## 5. Matriz de Probabilidad Origen-Destino")
     st.markdown("""
     Este heatmap muestra la probabilidad de que un viaje desde una estación origen termine en una estación destino.
     Los valores representan el porcentaje de viajes desde cada origen hacia cada destino.
