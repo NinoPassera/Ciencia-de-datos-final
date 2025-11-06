@@ -464,7 +464,194 @@ def plots_page():
     
     st.markdown("---")
     
-    # Visualización 4: Matriz Origen-Destino (Heatmap)
+    # Visualización 4: Evolución Mensual - Línea de Tiempo de Tendencias
+    st.markdown("## 4. Evolución Mensual: Línea de Tiempo de Tendencias")
+    st.markdown("""
+    Este gráfico muestra la evolución temporal de los viajes a lo largo del tiempo. 
+    Puedes ver las tendencias mensuales y filtrar por un mes específico para analizar patrones detallados.
+    """)
+    
+    # Verificar que existe la columna 'mes'
+    if 'mes' not in df.columns:
+        st.warning("⚠️ El dataset no contiene la columna 'mes' necesaria para este gráfico.")
+    else:
+        # Mapeo de meses a nombres
+        meses_nombres = {
+            1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
+            5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
+            9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
+        }
+        
+        # Selector de mes (opcional, para filtrar)
+        meses_disponibles = sorted(df['mes'].unique())
+        opciones_meses = ['Todos los meses'] + [meses_nombres[m] for m in meses_disponibles]
+        
+        mes_seleccionado_evo = st.selectbox(
+            "📅 Filtrar por Mes (Opcional)",
+            options=opciones_meses,
+            index=0,
+            help="Selecciona un mes específico para ver su evolución detallada, o 'Todos los meses' para ver la evolución completa",
+            key="mes_evolucion_selector"
+        )
+        
+        # Crear datos para la evolución temporal
+        # Agrupar por mes y contar viajes
+        evolucion_mensual = df.groupby('mes').size().reset_index(name='cantidad_viajes')
+        evolucion_mensual['mes_nombre'] = evolucion_mensual['mes'].map(meses_nombres)
+        
+        # Si hay columna 'semana', también podemos hacer evolución semanal
+        evolucion_semanal = None
+        if 'semana' in df.columns:
+            # Agrupar por semana y contar viajes
+            evolucion_semanal = df.groupby('semana').size().reset_index(name='cantidad_viajes')
+            # Ordenar por semana (asumiendo formato YYYY-WW)
+            evolucion_semanal = evolucion_semanal.sort_values('semana')
+        
+        # Aplicar filtro de mes si se seleccionó uno
+        df_filtrado_evo = df.copy()
+        mostrar_detalle = False
+        if mes_seleccionado_evo != 'Todos los meses':
+            mes_numero = [k for k, v in meses_nombres.items() if v == mes_seleccionado_evo][0]
+            df_filtrado_evo = df_filtrado_evo[df_filtrado_evo['mes'] == mes_numero]
+            mostrar_detalle = True
+            
+            # Si hay filtro de mes, mostrar evolución por día de la semana o por semana del mes
+            if 'dia_semana' in df_filtrado_evo.columns:
+                evolucion_dia = df_filtrado_evo.groupby('dia_semana').size().reset_index(name='cantidad_viajes')
+                dias_nombres = {0: 'Lunes', 1: 'Martes', 2: 'Miércoles', 3: 'Jueves', 
+                               4: 'Viernes', 5: 'Sábado', 6: 'Domingo'}
+                evolucion_dia['dia_nombre'] = evolucion_dia['dia_semana'].map(dias_nombres)
+        
+        # Crear gráfico principal de evolución mensual
+        chart_evolucion = (
+            alt.Chart(evolucion_mensual)
+            .mark_line(point=True, strokeWidth=3)
+            .encode(
+                x=alt.X('mes:O', 
+                       title='Mes',
+                       axis=alt.Axis(labelAngle=-45)),
+                y=alt.Y('cantidad_viajes:Q', 
+                       title='Cantidad de Viajes',
+                       axis=alt.Axis(format=',d')),
+                tooltip=[
+                    alt.Tooltip('mes_nombre:N', title='Mes'),
+                    alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d')
+                ],
+                color=alt.value('#1f77b4')
+            )
+            .properties(
+                width=700,
+                height=400,
+                title='Evolución Mensual de Viajes'
+            )
+        )
+        
+        # Agregar área debajo de la línea
+        chart_area = (
+            alt.Chart(evolucion_mensual)
+            .mark_area(opacity=0.3)
+            .encode(
+                x=alt.X('mes:O', axis=alt.Axis(labelAngle=-45)),
+                y=alt.Y('cantidad_viajes:Q', axis=alt.Axis(format=',d')),
+                color=alt.value('#1f77b4')
+            )
+        )
+        
+        chart_final = chart_area + chart_evolucion
+        
+        st.altair_chart(chart_final, use_container_width=True)
+        
+        # Si hay filtro de mes, mostrar gráfico detallado
+        if mostrar_detalle:
+            st.markdown(f"### 📊 Detalle del Mes Seleccionado: {mes_seleccionado_evo}")
+            
+            if 'dia_semana' in df_filtrado_evo.columns:
+                # Gráfico de evolución por día de la semana
+                chart_dia = (
+                    alt.Chart(evolucion_dia)
+                    .mark_bar()
+                    .encode(
+                        x=alt.X('dia_nombre:N', 
+                               title='Día de la Semana',
+                               sort=['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']),
+                        y=alt.Y('cantidad_viajes:Q', 
+                               title='Cantidad de Viajes',
+                               axis=alt.Axis(format=',d')),
+                        color=alt.Color('cantidad_viajes:Q', 
+                                       scale=alt.Scale(scheme='blues'),
+                                       legend=None),
+                        tooltip=[
+                            alt.Tooltip('dia_nombre:N', title='Día'),
+                            alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d')
+                        ]
+                    )
+                    .properties(
+                        width=700,
+                        height=300,
+                        title=f'Distribución de Viajes por Día de la Semana - {mes_seleccionado_evo}'
+                    )
+                )
+                st.altair_chart(chart_dia, use_container_width=True)
+            
+            # Estadísticas del mes seleccionado
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Total de Viajes", f"{len(df_filtrado_evo):,}")
+            with col2:
+                if 'origen' in df_filtrado_evo.columns:
+                    origenes_unicos = df_filtrado_evo['origen'].nunique()
+                    st.metric("Estaciones Origen Únicas", origenes_unicos)
+            with col3:
+                if 'destino' in df_filtrado_evo.columns:
+                    destinos_unicos = df_filtrado_evo['destino'].nunique()
+                    st.metric("Estaciones Destino Únicas", destinos_unicos)
+        
+        # Mostrar evolución semanal si está disponible y no hay filtro de mes
+        if evolucion_semanal is not None and not mostrar_detalle:
+            st.markdown("### 📈 Evolución Semanal")
+            
+            chart_semanal = (
+                alt.Chart(evolucion_semanal)
+                .mark_line(point=True, strokeWidth=2)
+                .encode(
+                    x=alt.X('semana:N', 
+                           title='Semana',
+                           axis=alt.Axis(labelAngle=-45)),
+                    y=alt.Y('cantidad_viajes:Q', 
+                           title='Cantidad de Viajes',
+                           axis=alt.Axis(format=',d')),
+                    tooltip=[
+                        alt.Tooltip('semana:N', title='Semana'),
+                        alt.Tooltip('cantidad_viajes:Q', title='Viajes', format=',d')
+                    ],
+                    color=alt.value('#ff7f0e')
+                )
+                .properties(
+                    width=700,
+                    height=300,
+                    title='Evolución Semanal de Viajes'
+                )
+            )
+            st.altair_chart(chart_semanal, use_container_width=True)
+        
+        # Estadísticas generales
+        st.markdown("**📊 Estadísticas de Evolución:**")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            max_mes = evolucion_mensual.loc[evolucion_mensual['cantidad_viajes'].idxmax()]
+            st.metric("Mes con Más Viajes", 
+                     f"{max_mes['mes_nombre']}: {max_mes['cantidad_viajes']:,}")
+        with col2:
+            min_mes = evolucion_mensual.loc[evolucion_mensual['cantidad_viajes'].idxmin()]
+            st.metric("Mes con Menos Viajes", 
+                     f"{min_mes['mes_nombre']}: {min_mes['cantidad_viajes']:,}")
+        with col3:
+            promedio = evolucion_mensual['cantidad_viajes'].mean()
+            st.metric("Promedio Mensual", f"{promedio:,.0f} viajes")
+    
+    st.markdown("---")
+    
+    # Visualización 5: Matriz Origen-Destino (Heatmap)
     st.markdown("## 4. Matriz de Probabilidad Origen-Destino")
     st.markdown("""
     Este heatmap muestra la probabilidad de que un viaje desde una estación origen termine en una estación destino.
