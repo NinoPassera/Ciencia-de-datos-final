@@ -449,18 +449,6 @@ def plots_page():
             9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
         }
         
-        # Selector de mes (opcional, para filtrar)
-        meses_disponibles = sorted(df['mes'].unique())
-        opciones_meses = ['Todos los meses'] + [meses_nombres[m] for m in meses_disponibles]
-        
-        mes_seleccionado_evo = st.selectbox(
-            "📅 Filtrar por Mes (Opcional)",
-            options=opciones_meses,
-            index=0,
-            help="Selecciona un mes específico para ver su evolución detallada, o 'Todos los meses' para ver la evolución completa",
-            key="mes_evolucion_selector"
-        )
-        
         # Crear datos para la evolución temporal
         # Agrupar por mes y contar viajes
         evolucion_mensual = df.groupby('mes').size().reset_index(name='cantidad_viajes')
@@ -473,21 +461,6 @@ def plots_page():
             evolucion_semanal = df.groupby('semana').size().reset_index(name='cantidad_viajes')
             # Ordenar por semana (asumiendo formato YYYY-WW)
             evolucion_semanal = evolucion_semanal.sort_values('semana')
-        
-        # Aplicar filtro de mes si se seleccionó uno
-        df_filtrado_evo = df.copy()
-        mostrar_detalle = False
-        if mes_seleccionado_evo != 'Todos los meses':
-            mes_numero = [k for k, v in meses_nombres.items() if v == mes_seleccionado_evo][0]
-            df_filtrado_evo = df_filtrado_evo[df_filtrado_evo['mes'] == mes_numero]
-            mostrar_detalle = True
-            
-            # Si hay filtro de mes, mostrar evolución por día de la semana o por semana del mes
-            if 'dia_semana' in df_filtrado_evo.columns:
-                evolucion_dia = df_filtrado_evo.groupby('dia_semana').size().reset_index(name='cantidad_viajes')
-                dias_nombres = {0: 'Lunes', 1: 'Martes', 2: 'Miércoles', 3: 'Jueves', 
-                               4: 'Viernes', 5: 'Sábado', 6: 'Domingo'}
-                evolucion_dia['dia_nombre'] = evolucion_dia['dia_semana'].map(dias_nombres)
         
         # Crear gráfico principal de evolución mensual
         chart_evolucion = (
@@ -527,6 +500,33 @@ def plots_page():
         chart_final = chart_area + chart_evolucion
         
         st.altair_chart(chart_final, use_container_width=True)
+        
+        # Selector de mes (opcional, para filtrar el detalle)
+        meses_disponibles = sorted(df['mes'].unique())
+        opciones_meses = ['Todos los meses'] + [meses_nombres[m] for m in meses_disponibles]
+        
+        mes_seleccionado_evo = st.selectbox(
+            "📅 Filtrar por Mes (Opcional)",
+            options=opciones_meses,
+            index=0,
+            help="Selecciona un mes específico para ver su evolución detallada, o 'Todos los meses' para ver la evolución completa",
+            key="mes_evolucion_selector"
+        )
+        
+        # Aplicar filtro de mes si se seleccionó uno
+        df_filtrado_evo = df.copy()
+        mostrar_detalle = False
+        if mes_seleccionado_evo != 'Todos los meses':
+            mes_numero = [k for k, v in meses_nombres.items() if v == mes_seleccionado_evo][0]
+            df_filtrado_evo = df_filtrado_evo[df_filtrado_evo['mes'] == mes_numero]
+            mostrar_detalle = True
+            
+            # Si hay filtro de mes, mostrar evolución por día de la semana o por semana del mes
+            if 'dia_semana' in df_filtrado_evo.columns:
+                evolucion_dia = df_filtrado_evo.groupby('dia_semana').size().reset_index(name='cantidad_viajes')
+                dias_nombres = {0: 'Lunes', 1: 'Martes', 2: 'Miércoles', 3: 'Jueves', 
+                               4: 'Viernes', 5: 'Sábado', 6: 'Domingo'}
+                evolucion_dia['dia_nombre'] = evolucion_dia['dia_semana'].map(dias_nombres)
         
         # Si hay filtro de mes, mostrar gráfico detallado
         if mostrar_detalle:
