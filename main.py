@@ -28,7 +28,6 @@ def main_page():
     
     1. **Estaciones y Bicicletas**: El sistema cuenta con múltiples estaciones ubicadas en puntos 
        estratégicos de la ciudad (plazas, instituciones públicas, centros de transporte, etc.). 
-       Cada estación tiene capacidad para 10 bicicletas.
     
     2. **Proceso de Uso**: Los usuarios pueden:
        - Descargar la aplicación móvil "biciTRAN" o escanear el código QR en las estaciones
@@ -50,8 +49,7 @@ def main_page():
     - Centros de transporte (Estación Mitre, Estación Belgrano)
     - Puntos de interés cultural y turístico (Teatro Municipal, Escuela Nacional, etc.)
     
-    Cada estación tiene capacidad para 10 bicicletas, permitiendo un flujo continuo de usuarios 
-    en diferentes horarios del día.
+    Cada estación permite un flujo continuo de usuarios en diferentes horarios del día.
     """)
     
     st.markdown("---")
@@ -60,7 +58,7 @@ def main_page():
     ## 🎯 Objetivo del Proyecto
     
     Este proyecto utiliza técnicas de machine learning para analizar y predecir patrones de comportamiento 
-    en el uso del sistema biciTRAN. Los datos analizados provienen directamente del sistema operativo 
+    en el uso del sistema biciTRAN. Los datos analizados provienen directamente del sistema 
     de bicicletas compartidas, incluyendo información sobre:
     
     - **Viajes realizados**: origen, destino, fecha y hora de cada viaje
@@ -74,10 +72,8 @@ def main_page():
     - Identificar patrones de movilidad urbana
     - Analizar la demanda en diferentes estaciones y horarios
     - Predecir destinos probables basados en características del viaje y del usuario
-    - Optimizar la distribución de bicicletas entre estaciones
-    - Mejorar la planificación y gestión del sistema
     
-    Los datos utilizados en este análisis son reales y provienen del sistema operativo de biciTRAN, 
+    Los datos utilizados en este análisis son reales y provienen del sistema de biciTRAN, 
     proporcionando insights valiosos sobre el comportamiento de los usuarios y los patrones de uso 
     del sistema de bicicletas compartidas.
     """)

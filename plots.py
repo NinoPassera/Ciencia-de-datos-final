@@ -296,7 +296,7 @@ def plots_page():
     # Visualización 3: Mapa de Calor de Estaciones
     st.markdown("## 3. Mapa de Calor de Estaciones")
     st.markdown("""
-    Este mapa muestra la frecuencia de uso de cada estación. Las estaciones más oscuras y grandes 
+    Este mapa muestra la frecuencia de uso de cada estación. Las estaciones más grandes 
     indican mayor cantidad de viajes (tanto como origen como destino).
     """)
     

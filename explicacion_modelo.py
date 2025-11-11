@@ -433,10 +433,9 @@ def explicacion_modelo_page():
     
     1. **Preprocesamiento de datos**: Limpieza y normalización de datos históricos de viajes
     2. **Feature Engineering**: Creación de características derivadas de los datos originales
-    3. **Filtrado**: Se mantienen solo destinos con al menos 50 registros para garantizar robustez
-    4. **División de datos**: 80% entrenamiento, 20% test
-    5. **Entrenamiento**: Random Forest Classifier con los hiperparámetros optimizados
-    6. **Validación**: Usando Out-of-Bag (OOB) score y validación cruzada
+    3. **División de datos**: 80% entrenamiento, 20% test
+    4. **Entrenamiento**: Random Forest Classifier con los hiperparámetros optimizados
+    5. **Validación**: Usando Out-of-Bag (OOB) score y validación cruzada
     
     ### Métricas de Evaluación
     
